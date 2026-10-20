@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aeroporto Tancredo Neves - Fila Única Unificada</title>
+  <title>Aeroporto Tancredo Neves - Fila Única em Nuvem</title>
   
   <meta name="theme-color" content="#f59e0b">
-  <meta name="description" content="Fila Única Eletrônica de Táxi e Passageiros - Aeroporto Tancredo Neves.">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Fila Única de Táxi em Tempo Real - Aeroporto Tancredo Neves.">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <style>
     ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -23,7 +25,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
-  <!-- HEADER ÚNICO -->
+  <!-- HEADER -->
   <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-40">
     <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center space-x-3">
@@ -32,54 +34,54 @@
         </div>
         <div>
           <h1 class="font-extrabold text-base sm:text-lg text-amber-400 tracking-tight leading-none">Aeroporto Tancredo Neves</h1>
-          <p class="text-xs text-slate-400 font-medium">Fila Única Eletrônica (Motoristas & Passageiros)</p>
+          <p class="text-xs text-slate-400 font-medium">Fila Única Sincronizada em Nuvem</p>
         </div>
       </div>
       <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistema Ativo
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Nuvem Online
       </div>
     </div>
   </header>
 
-  <!-- CONTEÚDO PRINCIPAL (TELA ÚNICA) -->
+  <!-- CONTEÚDO PRINCIPAL -->
   <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-    <!-- STATUS LOCALIZAÇÃO AEROPORTO -->
+    <!-- STATUS LOCALIZAÇÃO -->
     <div class="bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 shadow-xl flex items-center justify-between gap-4">
       <div class="flex items-center space-x-3">
         <div class="bg-amber-500/20 text-amber-400 p-3 rounded-xl border border-amber-500/30">
           <i data-lucide="map-pin" class="w-6 h-6"></i>
         </div>
         <div>
-          <span class="text-[10px] uppercase font-extrabold text-amber-400 tracking-wider">Localização Oficial</span>
+          <span class="text-[10px] uppercase font-extrabold text-amber-400 tracking-wider">Local Oficial</span>
           <h2 class="text-sm sm:text-base font-bold text-white">Aeroporto Internacional Tancredo Neves (Confins)</h2>
-          <p class="text-xs text-slate-400">Coordenadas: -19.6244, -43.9675 (Terminal de Atendimento)</p>
+          <p class="text-xs text-slate-400">Coordenadas: -19.6244, -43.9675</p>
         </div>
       </div>
     </div>
 
-    <!-- FORMULÁRIO DE CADASTRO NA FILA ÚNICA -->
+    <!-- FORMULÁRIO DE CADASTRO -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
       <div class="border-b border-slate-800 pb-3">
         <h3 class="font-bold text-lg text-amber-400 flex items-center gap-2">
           <i data-lucide="user-plus" class="w-5 h-5"></i> Entrar na Fila Única
         </h3>
-        <p class="text-xs text-slate-400 mt-1">Selecione seu perfil (Motorista ou Passageiro), digite seus dados e entre imediatamente na fila eletrônica compartilhada.</p>
+        <p class="text-xs text-slate-400 mt-1">Seu cadastro será sincronizado instantaneamente em todos os celulares conectados.</p>
       </div>
 
       <form id="fila-form" onsubmit="handleFilaRegister(event)" class="space-y-4">
-        <!-- Seletor de Perfil -->
+        <!-- Perfil -->
         <div class="grid grid-cols-2 gap-3">
           <label class="cursor-pointer">
             <input type="radio" name="perfil-choice" value="motorista" class="peer hidden" checked onchange="togglePerfilFields()">
-            <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 peer-checked:border-amber-500 transition flex items-center justify-center gap-2">
-              <i data-lucide="car" class="w-4 h-4"></i> Sou Motorista de Táxi
+            <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition flex items-center justify-center gap-2">
+              <i data-lucide="car" class="w-4 h-4"></i> Motorista de Táxi
             </div>
           </label>
           <label class="cursor-pointer">
             <input type="radio" name="perfil-choice" value="passageiro" class="peer hidden" onchange="togglePerfilFields()">
-            <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-emerald-500 peer-checked:text-slate-950 peer-checked:border-emerald-500 transition flex items-center justify-center gap-2">
-              <i data-lucide="user" class="w-4 h-4"></i> Sou Passageiro
+            <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-emerald-500 peer-checked:text-slate-950 transition flex items-center justify-center gap-2">
+              <i data-lucide="user" class="w-4 h-4"></i> Passageiro
             </div>
           </label>
         </div>
@@ -90,15 +92,15 @@
             <input type="text" id="input-name" required placeholder="Ex: Carlos Eduardo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
           </div>
           <div>
-            <label class="text-xs text-slate-400 font-semibold mb-1 block">Número de Telefone / WhatsApp</label>
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Telefone / WhatsApp</label>
             <input type="tel" id="input-phone" required placeholder="(31) 99999-8888" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
           </div>
         </div>
 
-        <!-- Campos exclusivos para Motorista -->
+        <!-- Motorista Fields -->
         <div id="fields-motorista" class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
           <div>
-            <label class="text-xs text-slate-400 font-semibold mb-1 block">Prefixo do Táxi</label>
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Prefixo</label>
             <input type="text" id="input-prefix" placeholder="Ex: T-102" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
           </div>
           <div>
@@ -106,88 +108,94 @@
             <input type="text" id="input-plate" placeholder="Ex: QX-3820" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
           </div>
           <div class="col-span-2">
-            <label class="text-xs text-slate-400 font-semibold mb-1 block">Cota de Atendimentos por Turno (1 a 4)</label>
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Cota de Atendimentos (1 a 4)</label>
             <div class="grid grid-cols-4 gap-2">
-              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="1" class="peer hidden" checked><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">1 Corrida</div></label>
-              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="2" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">2 Corridas</div></label>
-              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="3" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">3 Corridas</div></label>
-              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="4" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">4 Corridas</div></label>
+              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="1" class="peer hidden" checked><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">1</div></label>
+              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="2" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">2</div></label>
+              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="3" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">3</div></label>
+              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="4" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">4</div></label>
             </div>
           </div>
         </div>
 
-        <!-- Campos exclusivos para Passageiro (2 Opções de Destino) -->
+        <!-- Passageiro Fields -->
         <div id="fields-passageiro" class="hidden space-y-3 pt-2 border-t border-slate-800">
-          <label class="text-xs text-slate-400 font-semibold block">Escolha o Destino em Belo Horizonte:</label>
+          <label class="text-xs text-slate-400 font-semibold block">Escolha o Destino em BH:</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
               <input type="radio" name="destination-choice" value="Rodoviária de Belo Horizonte" class="text-emerald-500" checked>
               <div class="text-xs">
                 <strong class="text-white block">Rodoviária de BH</strong>
-                <span class="text-slate-400">Praça Rio Branco, Centro</span>
+                <span class="text-slate-400">Praça Rio Branco</span>
               </div>
             </label>
             <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
               <input type="radio" name="destination-choice" value="Avenida Álvares Cabral Belo Horizonte" class="text-emerald-500">
               <div class="text-xs">
                 <strong class="text-white block">Av. Álvares Cabral</strong>
-                <span class="text-slate-400">Região Central / Lourdes</span>
+                <span class="text-slate-400">Região Central</span>
               </div>
             </label>
           </div>
         </div>
 
         <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 text-sm">
-          <i data-lucide="arrow-right-circle" class="w-4 h-4"></i> Entrar na Fila Única Compartilhada
+          <i data-lucide="send" class="w-4 h-4"></i> Entrar na Fila em Nuvem
         </button>
       </form>
     </div>
 
-    <!-- PAINEL DA FILA ÚNICA EM TEMPO REAL -->
+    <!-- PAINEL DA FILA ÚNICA -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="font-bold text-lg text-white flex items-center gap-2">
-          <i data-lucide="list-ordered" class="w-5 h-5 text-amber-400"></i> Fila Única Geral (Banco de Dados Compartilhado)
+          <i data-lucide="list-ordered" class="w-5 h-5 text-amber-400"></i> Fila Única em Tempo Real (Nuvem)
         </h3>
-        <span id="fila-counter" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium">0 pessoas na fila</span>
+        <span id="fila-counter" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium">Carregando...</span>
       </div>
 
       <div id="fila-container" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-        <!-- Render dinâmico da fila unificada -->
+        <!-- Render dinâmico em tempo real -->
       </div>
     </div>
 
   </main>
 
-  <!-- FOOTER -->
-  <footer class="bg-slate-900 border-t border-slate-800 py-4 mt-auto">
-    <div class="max-w-4xl mx-auto px-4 text-center text-xs text-slate-500">
-      <p>© Aeroporto Tancredo Neves - Fila Única Integrada PWA</p>
-    </div>
-  </footer>
-
-  <!-- SCRIPT DA FILA ÚNICA -->
+  <!-- LÓGICA FIREBASE REALTIME DATABASE -->
   <script>
-    const STORAGE_KEY_FILA = 'aeroporto_fila_unica_v1';
-    const channel = new BroadcastChannel('aeroporto_fila_channel');
-
-    let fila = JSON.parse(localStorage.getItem(STORAGE_KEY_FILA)) || [
-      { id: '1', perfil: 'motorista', name: 'Carlos Silveira', phone: '31999991111', prefix: 'CNF-101', plate: 'HMX-4920', quota: 2, completed: 0, status: 'disponivel' },
-      { id: '2', perfil: 'passageiro', name: 'Mariana Costa', phone: '31988882222', destination: 'Rodoviária de Belo Horizonte', status: 'aguardando' }
-    ];
-
-    function saveData() {
-      localStorage.setItem(STORAGE_KEY_FILA, JSON.stringify(fila));
-      channel.postMessage({ type: 'SYNC_FILA' });
-      renderFila();
-    }
-
-    channel.onmessage = (e) => {
-      if (e.data && e.data.type === 'SYNC_FILA') {
-        fila = JSON.parse(localStorage.getItem(STORAGE_KEY_FILA)) || [];
-        renderFila();
-      }
+    // CONFIGURAÇÃO DO FIREBASE (Insira suas chaves do console do Firebase aqui)
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY_AQUI",
+      authDomain: "seu-projeto.firebaseapp.com",
+      databaseURL: "https://seu-projeto-default-rtdb.firebaseio.com",
+      projectId: "seu-projeto",
+      storageBucket: "seu-projeto.appspot.com",
+      messagingSenderId: "00000000000",
+      appId: "1:000:web:000"
     };
+
+    // Inicializa o Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    let filaCache = [];
+
+    // Ouve alterações no banco de dados em tempo real automaticamente
+    db.ref('fila_aeroporto').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Transforma o objeto do Firebase em array mantendo a ordem
+        filaCache = Object.keys(data).map(key => ({
+          firebaseId: key,
+          ...data[key]
+        }));
+      } else {
+        filaCache = [];
+      }
+      renderFila();
+    });
 
     function togglePerfilFields() {
       const perfil = document.querySelector('input[name="perfil-choice"]:checked').value;
@@ -215,11 +223,10 @@
       if (!name || !phone) return;
 
       let novoItem = {
-        id: 'item_' + Date.now(),
         perfil,
         name,
         phone,
-        status: 'ativo'
+        timestamp: Date.now()
       };
 
       if (perfil === 'motorista') {
@@ -231,28 +238,32 @@
         novoItem.destination = document.querySelector('input[name="destination-choice"]:checked').value;
       }
 
-      fila.push(novoItem);
-      saveData();
-      document.getElementById('fila-form').reset();
-      togglePerfilFields();
-      alert('Cadastrado com sucesso na fila única!');
+      // Envia diretamente para a Nuvem do Firebase
+      db.ref('fila_aeroporto').push(novoItem).then(() => {
+        document.getElementById('fila-form').reset();
+        togglePerfilFields();
+        alert('Cadastrado com sucesso na fila em nuvem!');
+      }).catch((error) => {
+        alert('Erro ao conectar com a nuvem: ' + error.message);
+      });
     }
 
-    function removerDaFila(id) {
-      fila = fila.filter(item => item.id !== id);
-      saveData();
+    function removerDaFila(firebaseId) {
+      if (confirm('Deseja realmente sair da fila?')) {
+        db.ref('fila_aeroporto/' + firebaseId).remove();
+      }
     }
 
     function renderFila() {
       const container = document.getElementById('fila-container');
-      document.getElementById('fila-counter').textContent = `${fila.length} na fila`;
+      document.getElementById('fila-counter').textContent = `${filaCache.length} na fila`;
 
-      if (fila.length === 0) {
+      if (filaCache.length === 0) {
         container.innerHTML = `<div class="p-6 bg-slate-950 rounded-xl text-center text-xs text-slate-500">A fila única está vazia no momento.</div>`;
         return;
       }
 
-      container.innerHTML = fila.map((item, idx) => {
+      container.innerHTML = filaCache.map((item, idx) => {
         const isMotorista = item.perfil === 'motorista';
         const isFirst = idx === 0;
 
@@ -277,13 +288,13 @@
                 </div>
                 <p class="text-xs text-slate-400 mt-0.5">
                   Tel: ${item.phone} 
-                  ${isMotorista ? `• Prefixo: ${item.prefix} • Atendimentos: <strong class="text-amber-400">${item.completed}/${item.quota}</strong>` : `• Destino: <strong class="text-emerald-400">${item.destination}</strong>`}
+                  ${isMotorista ? `• Prefixo: ${item.prefix}` : `• Destino: <strong class="text-emerald-400">${item.destination}</strong>`}
                 </p>
               </div>
             </div>
 
             <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-              <button onclick="removerDaFila('${item.id}')" class="text-xs bg-red-950/60 hover:bg-red-900 text-red-400 border border-red-800/50 px-2.5 py-1.5 rounded-lg font-bold transition">
+              <button onclick="removerDaFila('${item.firebaseId}')" class="text-xs bg-red-950/60 hover:bg-red-900 text-red-400 border border-red-800/50 px-2.5 py-1.5 rounded-lg font-bold transition">
                 Sair da Fila
               </button>
             </div>
@@ -300,4 +311,3 @@
   </script>
 </body>
 </html>
-
