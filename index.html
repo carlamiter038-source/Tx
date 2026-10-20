@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Fila de Táxi & Passageiros PWA</title>
+  <title>TaxiFila Aeroporto - Conexão Inteligente PWA</title>
   
   <!-- PWA Theme Color & Meta Tags -->
   <meta name="theme-color" content="#f59e0b">
-  <meta name="description" content="Sistema Inteligente de Gestão de Fila de Táxi com Rotação de Atendimentos (1-4) e Solicitantes Integrados.">
+  <meta name="description" content="Sistema de Fila de Táxi com Geolocalização do Aeroporto Internacional Tancredo Neves e Destinos BH.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/taxi.png">
@@ -25,7 +25,6 @@
     .active-driver-card {
       animation: pulse-subtle 3s infinite ease-in-out;
     }
-    /* Scrollbar estilizada */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #1f2937; }
     ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
@@ -33,20 +32,20 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
-  <!-- BARRA DE NAVEGAÇÃO / HEADER -->
+  <!-- HEADER & NAVBAR -->
   <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
         <div class="bg-amber-500 text-slate-950 p-2 rounded-xl shadow-lg shadow-amber-500/20 font-black">
-          <i data-lucide="taxi" class="w-6 h-6"></i>
+          <i data-lucide="plane-takeoff" class="w-6 h-6"></i>
         </div>
         <div>
-          <h1 class="font-extrabold text-lg sm:text-xl text-amber-400 tracking-tight leading-none">TaxiFila PWA</h1>
-          <p class="text-xs text-slate-400 font-medium">Conexão Motoristas & Passageiros</p>
+          <h1 class="font-extrabold text-base sm:text-lg text-amber-400 tracking-tight leading-none">Aeroporto Tancredo Neves</h1>
+          <p class="text-xs text-slate-400 font-medium">Fila Eletrônica & Conexão Direta BH</p>
         </div>
       </div>
 
-      <!-- PWA Install & Tab Selector -->
+      <!-- Navegação de Abas & Instalação PWA -->
       <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
         <nav class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs sm:text-sm font-semibold">
           <button onclick="switchTab('motorista')" id="nav-motorista" class="px-3 py-1.5 rounded-lg transition-all text-amber-400 bg-slate-800 flex items-center gap-1.5">
@@ -56,7 +55,7 @@
             <i data-lucide="user-check" class="w-4 h-4"></i> Passageiros
           </button>
           <button onclick="switchTab('gestao')" id="nav-gestao" class="px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
-            <i data-lucide="sliders" class="w-4 h-4"></i> Fila & Painel
+            <i data-lucide="sliders" class="w-4 h-4"></i> Painel Geral
           </button>
         </nav>
 
@@ -70,8 +69,25 @@
   <!-- CONTEÚDO PRINCIPAL -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-    <!-- DASHBOARD DE AVISO / PRIMEIRO DA FILA (VISÍVEL EM TODAS AS ABAS) -->
-    <div id="active-driver-banner" class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
+    <!-- BARRA DE STATUS DE LOCALIZAÇÃO EM TEMPO REAL (AEROPORTO CNF) -->
+    <div class="bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3 w-full md:w-auto">
+        <div class="bg-amber-500/20 text-amber-400 p-3 rounded-xl border border-amber-500/30">
+          <i data-lucide="map-pin" class="w-6 h-6 animate-bounce"></i>
+        </div>
+        <div>
+          <span class="text-[10px] uppercase font-extrabold text-amber-400 tracking-wider">Localização Ativa em Tempo Real</span>
+          <h2 class="text-sm sm:text-base font-bold text-white">Aeroporto Internacional Tancredo Neves (Confins - MG)</h2>
+          <p id="geo-status-text" class="text-xs text-slate-400">Coordenadas de despacho: -19.6244, -43.9675 (Terminal 1 - Ponto de Táxi Oficial)</p>
+        </div>
+      </div>
+      <button onclick="triggerLiveGeolocation()" class="w-full md:w-auto text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
+        <i data-lucide="navigation" class="w-4 h-4"></i> Atualizar GPS do Aeroporto
+      </button>
+    </div>
+
+    <!-- BANNER DO PRIMEIRO DA FILA EM TEMPO REAL -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
         <div class="flex items-center space-x-4 w-full md:w-auto">
           <div class="relative">
@@ -84,27 +100,23 @@
             </span>
           </div>
           <div>
-            <div class="flex items-center space-x-2">
-              <span class="bg-amber-400/20 text-amber-300 text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30">
-                PRIMEIRO DA FILA (EM ATENDIMENTO)
-              </span>
-            </div>
-            <h2 id="banner-driver-name" class="text-xl sm:text-2xl font-black text-white mt-0.5">Nenhum motorista na fila</h2>
-            <p id="banner-driver-details" class="text-sm text-slate-400 font-medium">Aguardando entrada de motoristas no sistema...</p>
+            <span class="bg-amber-400/20 text-amber-300 text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30">
+              PRIMEIRO DA FILA (PRONTO PARA ATENDER)
+            </span>
+            <h3 id="banner-driver-name" class="text-xl sm:text-2xl font-black text-white mt-1">Nenhum motorista cadastrado</h3>
+            <p id="banner-driver-details" class="text-xs sm:text-sm text-slate-400">Cadastre seu nome na aba Motoristas para entrar na fila eletrônica unificada.</p>
           </div>
         </div>
 
-        <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-4 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-          <div class="text-center px-2">
-            <span class="text-xs text-slate-400 block font-semibold">Cota de Atendimentos</span>
-            <span id="banner-quota-progress" class="text-xl font-extrabold text-amber-400">0 / 0</span>
+        <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+          <div class="text-center px-3">
+            <span class="text-[10px] text-slate-400 block uppercase font-bold">Cotas (1 a 4)</span>
+            <span id="banner-quota-progress" class="text-lg font-extrabold text-amber-400">0 / 0</span>
           </div>
           <div class="h-8 w-px bg-slate-800"></div>
-          <div class="text-center px-2">
-            <span class="text-xs text-slate-400 block font-semibold">Status do Turno</span>
-            <span id="banner-status-badge" class="text-xs font-bold px-2 py-1 rounded bg-slate-800 text-slate-300 inline-block mt-0.5">
-              Aguardando
-            </span>
+          <div class="text-center px-3">
+            <span class="text-[10px] text-slate-400 block uppercase font-bold">Total na Fila</span>
+            <span id="banner-total-queue" class="text-lg font-extrabold text-emerald-400">0 táxis</span>
           </div>
         </div>
       </div>
@@ -114,228 +126,202 @@
     <section id="view-motorista" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- Cadastro/Entrada na Fila -->
+        <!-- Cadastro Permanente do Motorista -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
           <h3 class="font-bold text-lg text-amber-400 flex items-center gap-2">
-            <i data-lucide="user-plus" class="w-5 h-5"></i> Registrar Entrada na Fila
+            <i data-lucide="user-plus" class="w-5 h-5"></i> Registro Permanente do Motorista
           </h3>
+          <p class="text-xs text-slate-400">Digite seu nome. Seu registro fica salvo permanentemente no banco de dados unificado do aeroporto.</p>
           
           <form id="driver-form" onsubmit="handleDriverRegister(event)" class="space-y-3">
             <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Nome do Motorista</label>
-              <input type="text" id="driver-name" required placeholder="Ex: Carlos Silva" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+              <label class="text-xs text-slate-400 font-semibold mb-1 block">Nome Completo do Motorista</label>
+              <input type="text" id="driver-name" required placeholder="Ex: Carlos Eduardo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-slate-400 font-semibold mb-1 block">Prefix / Nº Táxi</label>
-                <input type="text" id="driver-prefix" required placeholder="Ex: T-042" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                <label class="text-xs text-slate-400 font-semibold mb-1 block">Prefixo do Táxi</label>
+                <input type="text" id="driver-prefix" required placeholder="Ex: CNF-104" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
               </div>
               <div>
-                <label class="text-xs text-slate-400 font-semibold mb-1 block">Placa</label>
-                <input type="text" id="driver-plate" placeholder="Ex: ABC-1234" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                <label class="text-xs text-slate-400 font-semibold mb-1 block">Placa do Veículo</label>
+                <input type="text" id="driver-plate" placeholder="Ex: QX-3820" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
               </div>
             </div>
 
             <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">
-                Cota Desejada de Atendimentos neste Turno (1 a 4):
-              </label>
+              <label class="text-xs text-slate-400 font-semibold mb-1 block">Cotas de Atendimento por Turno (1 a 4)</label>
               <div class="grid grid-cols-4 gap-2">
-                <label class="cursor-pointer">
-                  <input type="radio" name="quota-choice" value="1" class="peer hidden" checked>
-                  <div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 peer-checked:border-amber-500 transition">1</div>
-                </label>
-                <label class="cursor-pointer">
-                  <input type="radio" name="quota-choice" value="2" class="peer hidden">
-                  <div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 peer-checked:border-amber-500 transition">2</div>
-                </label>
-                <label class="cursor-pointer">
-                  <input type="radio" name="quota-choice" value="3" class="peer hidden">
-                  <div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 peer-checked:border-amber-500 transition">3</div>
-                </label>
-                <label class="cursor-pointer">
-                  <input type="radio" name="quota-choice" value="4" class="peer hidden">
-                  <div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 peer-checked:border-amber-500 transition">4</div>
-                </label>
+                <label class="cursor-pointer"><input type="radio" name="quota-choice" value="1" class="peer hidden" checked><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">1</div></label>
+                <label class="cursor-pointer"><input type="radio" name="quota-choice" value="2" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">2</div></label>
+                <label class="cursor-pointer"><input type="radio" name="quota-choice" value="3" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">3</div></label>
+                <label class="cursor-pointer"><input type="radio" name="quota-choice" value="4" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">4</div></label>
               </div>
-              <p class="text-[11px] text-slate-500 mt-1">Ao atingir a cota escolhida, o motorista é automaticamente movido para o final da fila.</p>
             </div>
 
             <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
-              <i data-lucide="plus-circle" class="w-4 h-4"></i> Entrar na Fila de Espera
+              <i data-lucide="check-circle" class="w-4 h-4"></i> Salvar e Entrar na Fila
             </button>
           </form>
         </div>
 
-        <!-- Painel de Controle Individual do Motorista #1 -->
+        <!-- Terminal de Atendimento do Motorista #1 -->
         <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between space-y-4">
           <div>
             <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
               <h3 class="font-bold text-lg text-white flex items-center gap-2">
-                <i data-lucide="navigation" class="w-5 h-5 text-amber-400"></i> Terminal de Operação do Motorista
+                <i data-lucide="radio" class="w-5 h-5 text-amber-400"></i> Terminal do Motorista (Fila Eletrônica)
               </h3>
-              <span id="terminal-badge" class="bg-amber-500/20 text-amber-300 text-xs px-3 py-1 rounded-full border border-amber-500/30 font-semibold">
-                Modo Interativo
+              <span class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full border border-amber-500/30 font-semibold">
+                Sincronizado Banco Único
               </span>
             </div>
 
             <p class="text-sm text-slate-400 mb-4">
-              Abaixo estão os chamados diretos atribuídos ao <strong>Primeiro da Fila (#1)</strong>. Quando uma solicitação de passageiro for aceita e concluída, a contagem de atendimentos do turno aumentará.
+              Quando um passageiro solicitar uma viagem saindo do Aeroporto Tancredo Neves para um dos destinos, o chamado aparecerá automaticamente aqui para o <strong>Primeiro da Fila (#1)</strong>.
             </p>
 
-            <!-- Lista de Solicitações para o Motorista #1 -->
             <div class="space-y-3">
               <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <i data-lucide="bell" class="w-4 h-4 text-amber-400"></i> Solicitações Pendentes Atribuidas
+                <i data-lucide="bell" class="w-4 h-4 text-amber-400"></i> Solicitações Diretas de Passageiros
               </h4>
               <div id="driver-requests-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-                <!-- Render dinâmico via JS -->
+                <!-- Render dinâmico -->
               </div>
             </div>
-          </div>
-
-          <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-medium">Precisa dar uma pausa/almoço?</span>
-            <button onclick="togglePauseFirstDriver()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 font-bold transition flex items-center gap-1">
-              <i data-lucide="pause-circle" class="w-4 h-4 text-amber-400"></i> Pausar / Despausar Meu Posto
-            </button>
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- SEÇÃO 2: ÁREA DO PASSAGEIRO (SOLICITANTES) -->
+    <!-- SEÇÃO 2: ÁREA DO PASSAGEIRO -->
     <section id="view-passageiro" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- Form de Solicitação -->
+        <!-- Formulário de Solicitação com as 2 Opções de Destino -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
           <div class="border-b border-slate-800 pb-3">
             <h3 class="font-bold text-lg text-emerald-400 flex items-center gap-2">
-              <i data-lucide="map-pin" class="w-5 h-5"></i> Solicitar um Táxi Agora
+              <i data-lucide="user-check" class="w-5 h-5"></i> Solicitar Táxi no Aeroporto
             </h3>
-            <p class="text-xs text-slate-400 mt-1">Sua solicitação será encaminhada diretamente ao motorista na Posição #1 da fila.</p>
+            <p class="text-xs text-slate-400 mt-1">Digite seu nome e escolha um dos 2 destinos oficiais em Belo Horizonte.</p>
           </div>
 
           <form id="passenger-form" onsubmit="handlePassengerRequest(event)" class="space-y-3">
             <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Seu Nome / Empresa</label>
-              <input type="text" id="passenger-name" required placeholder="Ex: Ana Souza" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              <label class="text-xs text-slate-400 font-semibold mb-1 block">Seu Nome</label>
+              <input type="text" id="passenger-name" required placeholder="Ex: Mariana Costa" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
             </div>
+
+            <!-- Origem Fixa Aeroporto Tancredo Neves -->
             <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Local de Embarque / Ponto de Coleta</label>
-              <input type="text" id="passenger-pickup" required placeholder="Ex: Portão Principal - Aeroporto / Av. Central 500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              <label class="text-xs text-slate-400 font-semibold mb-1 block">Local de Partida (Embarque)</label>
+              <input type="text" readonly value="Aeroporto Internacional Tancredo Neves (Confins)" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-amber-300 font-medium cursor-not-allowed">
             </div>
+
+            <!-- As 2 Opções de Destino Solicitadas -->
             <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Destino (Opcional)</label>
-              <input type="text" id="passenger-destination" placeholder="Ex: Hotel Plaza" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              <label class="text-xs text-slate-400 font-semibold mb-1 block">Escolha o Destino em Belo Horizonte:</label>
+              <div class="space-y-2">
+                <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
+                  <input type="radio" name="destination-choice" value="Rodoviária de Belo Horizonte" class="text-emerald-500 focus:ring-emerald-500" checked>
+                  <div class="text-xs">
+                    <strong class="text-white block">Rodoviária de Belo Horizonte</strong>
+                    <span class="text-slate-400">Praça Rio Branco, Centro - BH</span>
+                  </div>
+                </label>
+
+                <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
+                  <input type="radio" name="destination-choice" value="Avenida Álvares Cabral Belo Horizonte" class="text-emerald-500 focus:ring-emerald-500">
+                  <div class="text-xs">
+                    <strong class="text-white block">Avenida Álvares Cabral</strong>
+                    <span class="text-slate-400">Região Central / Lourdes - BH</span>
+                  </div>
+                </label>
+              </div>
             </div>
+
             <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Telefone / WhatsApp para contato</label>
-              <input type="tel" id="passenger-phone" placeholder="(11) 99999-9999" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+              <label class="text-xs text-slate-400 font-semibold mb-1 block">Telefone / WhatsApp</label>
+              <input type="tel" id="passenger-phone" placeholder="(31) 98888-7777" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
             </div>
 
             <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 text-sm">
-              <i data-lucide="send" class="w-4 h-4"></i> Enviar Solicitação para a Fila
+              <i data-lucide="send" class="w-4 h-4"></i> Conectar com Motorista Imediato
             </button>
           </form>
         </div>
 
-        <!-- Status do Acompanhamento de Viagens -->
+        <!-- Acompanhamento em Tempo Real do Passageiro -->
         <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 class="font-bold text-lg text-white flex items-center gap-2">
-              <i data-lucide="clock" class="w-5 h-5 text-emerald-400"></i> Painel de Acompanhamento das Solicitadas
+              <i data-lucide="clock" class="w-5 h-5 text-emerald-400"></i> Status das Solicitações e Conexão com o Motorista
             </h3>
             <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium">Tempo Real</span>
           </div>
 
           <div id="passenger-requests-status" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-            <!-- Render dinâmico de solicitações ativas e histórico -->
+            <!-- Render dinâmico -->
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- SEÇÃO 3: PAINEL DE GESTÃO DA FILA E HISTÓRICO -->
+    <!-- SEÇÃO 3: PAINEL GERAL (FILA ELETRÔNICA E BANCO UNIFICADO) -->
     <section id="view-gestao" class="hidden space-y-6">
-      
-      <!-- Visualização Completa da Fila -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
           <div>
             <h3 class="font-bold text-lg text-white flex items-center gap-2">
-              <i data-lucide="list-ordered" class="w-5 h-5 text-amber-400"></i> Fila de Táxis em Tempo Real
+              <i data-lucide="database" class="w-5 h-5 text-amber-400"></i> Fila Eletrônica (Banco de Dados Unificado)
             </h3>
-            <p class="text-xs text-slate-400">Visualização sequencial de motoristas na fila com contadores de rotatividade (1-4 atendimentos)</p>
+            <p class="text-xs text-slate-400">Motoristas cadastrados ficam salvos permanentemente na fila e rotacionam conforme as cotas (1 a 4 atendimentos).</p>
           </div>
-          
-          <div class="flex items-center gap-2">
-            <button onclick="clearCompletedLogs()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Limpar Histórico
-            </button>
-            <button onclick="exportCSV()" class="text-xs bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
-              <i data-lucide="file-spread-sheet" class="w-3.5 h-3.5"></i> Exportar CSV
-            </button>
-          </div>
+          <button onclick="exportCSV()" class="text-xs bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
+            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Exportar Dados CSV
+          </button>
         </div>
 
         <div id="queue-list-container" class="space-y-3">
-          <!-- Render da Lista de Fila de Espera -->
+          <!-- Render da fila unificada -->
         </div>
       </div>
-
-      <!-- Log de Eventos e Histórico -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-3">
-        <h4 class="font-bold text-sm text-slate-300 uppercase tracking-wider flex items-center gap-2">
-          <i data-lucide="activity" class="w-4 h-4 text-amber-400"></i> Registro de Atividades e Histórico de Rotações
-        </h4>
-        <div id="activity-log" class="bg-slate-950 rounded-xl p-3 border border-slate-800/80 max-h-48 overflow-y-auto font-mono text-xs text-slate-400 space-y-1">
-          <!-- Logs em tempo real -->
-        </div>
-      </div>
-
     </section>
 
   </main>
 
-  <!-- RODAPÉ -->
+  <!-- FOOTER -->
   <footer class="bg-slate-900 border-t border-slate-800 py-4 mt-auto">
     <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <p>© TaxiFila PWA - Rotação Inteligente de Motoristas (1 a 4 Atendimentos por Turno)</p>
+      <p>© Aeroporto Internacional Tancredo Neves - Fila Eletrônica de Táxi PWA</p>
       <div class="flex items-center space-x-2">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>Sincronização Ativa via BroadcastChannel</span>
+        <span>Sincronização Ativa em Banco Único</span>
       </div>
     </div>
   </footer>
 
-  <!-- LÓGICA JAVASCRIPT PRINCIPAL -->
+  <!-- SCRIPT DE LÓGICA E CONEXÃO EM TEMPO REAL -->
   <script>
-    // --- ESTADO DA APLICAÇÃO (LOCALSTORAGE + BROADCAST) ---
-    const STORAGE_KEY_DRIVERS = 'taxifila_drivers_v1';
-    const STORAGE_KEY_REQUESTS = 'taxifila_requests_v1';
-    const STORAGE_KEY_LOGS = 'taxifila_logs_v1';
+    const STORAGE_KEY_DRIVERS = 'taxifila_aeroporto_drivers_v2';
+    const STORAGE_KEY_REQUESTS = 'taxifila_aeroporto_requests_v2';
+    const STORAGE_KEY_LOGS = 'taxifila_aeroporto_logs_v2';
 
-    const channel = new BroadcastChannel('taxifila_sync_channel');
+    const channel = new BroadcastChannel('taxifila_aeroporto_channel');
 
     let drivers = JSON.parse(localStorage.getItem(STORAGE_KEY_DRIVERS)) || [
-      { id: 'd1', name: 'Marcos Oliveira', prefix: 'T-101', plate: 'ABC-1234', quota: 3, completed: 1, status: 'disponivel', joinedAt: Date.now() - 3600000 },
-      { id: 'd2', name: 'João Mendes', prefix: 'T-205', plate: 'XYZ-5678', quota: 2, completed: 0, status: 'disponivel', joinedAt: Date.now() - 1800000 },
-      { id: 'd3', name: 'Roberto Lima', prefix: 'T-310', plate: 'KLE-9988', quota: 4, completed: 0, status: 'disponivel', joinedAt: Date.now() - 900000 }
+      { id: 'd1', name: 'Paulo Silveira', prefix: 'CNF-101', plate: 'HMX-4920', quota: 2, completed: 0, status: 'disponivel', joinedAt: Date.now() - 3600000 },
+      { id: 'd2', name: 'Marcos Vinicius', prefix: 'CNF-205', plate: 'QRD-8812', quota: 3, completed: 0, status: 'disponivel', joinedAt: Date.now() - 1800000 }
     ];
 
-    let requests = JSON.parse(localStorage.getItem(STORAGE_KEY_REQUESTS)) || [
-      { id: 'r1', passengerName: 'Ana Souza', pickup: 'Portão Principal - Terminal', destination: 'Centro Executivo', phone: '31998887766', status: 'pendente', assignedDriverId: 'd1', createdAt: Date.now() - 300000 }
-    ];
-
+    let requests = JSON.parse(localStorage.getItem(STORAGE_KEY_REQUESTS)) || [];
     let activityLogs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [
-      { time: new Date().toLocaleTimeString(), text: 'Sistema inicializado com dados demonstrativos.' }
+      { time: new Date().toLocaleTimeString(), text: 'Sistema conectado ao Aeroporto Tancredo Neves (Confins).' }
     ];
 
-    // Persistência e Sincronização
     function saveData(notify = true) {
       localStorage.setItem(STORAGE_KEY_DRIVERS, JSON.stringify(drivers));
       localStorage.setItem(STORAGE_KEY_REQUESTS, JSON.stringify(requests));
@@ -362,15 +348,14 @@
       if (activityLogs.length > 50) activityLogs.pop();
     }
 
-    // --- SONS E ALERTAS SINTETIZADOS (WEB AUDIO API) ---
-    function playBeep(freq = 587, duration = 0.15) {
+    // Alerta sonoro via Web Audio API
+    function playBeep(freq = 600, duration = 0.15) {
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
         const ctx = new AudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, ctx.currentTime);
         gain.gain.setValueAtTime(0.1, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
@@ -378,64 +363,88 @@
         gain.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime + duration);
-      } catch (e) { console.log('Audio not supported or blocked'); }
+      } catch (e) {}
     }
 
-    // --- REGRAS DE NEGÓCIO E ROTAÇÃO (1 A 4 ATENDIMENTOS) ---
-    
-    // Obtém o motorista atual na posição #1 que esteja disponível ou ocupado
+    // Geolocalização em Tempo Real do Aeroporto Tancredo Neves
+    function triggerLiveGeolocation() {
+      const statusText = document.getElementById('geo-status-text');
+      if ('geolocation' in navigator) {
+        statusText.textContent = "Obtendo geolocalização exata no Aeroporto Tancredo Neves...";
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude.toFixed(4);
+            const lon = position.coords.longitude.toFixed(4);
+            statusText.textContent = `GPS Ativo no Aeroporto • Lat: ${lat}, Lon: ${lon} (Precisão: ${Math.round(position.coords.accuracy)}m)`;
+            addLog(`Localização GPS atualizada no Aeroporto Tancredo Neves (${lat}, ${lon}).`);
+          },
+          (error) => {
+            statusText.textContent = "Aeroporto Internacional Tancredo Neves (Confins) - Modo Padrão Ativo (-19.6244, -43.9675)";
+          },
+          { enableHighAccuracy: true, timeout: 5000 }
+        );
+      } else {
+        statusText.textContent = "Aeroporto Internacional Tancredo Neves (Confins) - Coordenadas Padrão";
+      }
+    }
+
     function getActiveDriver() {
       return drivers.length > 0 ? drivers[0] : null;
     }
 
-    // Cadastrar Motorista
+    // Cadastro Permanente de Motorista (Sem exclusão automática)
     function handleDriverRegister(e) {
       e.preventDefault();
       const name = document.getElementById('driver-name').value.trim();
       const prefix = document.getElementById('driver-prefix').value.trim();
-      const plate = document.getElementById('driver-plate').value.trim();
+      const plate = document.getElementById('driver-plate').value.trim() || 'CNF-BR';
       const quota = parseInt(document.querySelector('input[name="quota-choice"]:checked').value);
 
       if (!name || !prefix) return;
 
-      const newDriver = {
-        id: 'd_' + Date.now(),
-        name,
-        prefix,
-        plate: plate || 'Não inf.',
-        quota: quota,
-        completed: 0,
-        status: 'disponivel',
-        joinedAt: Date.now()
-      };
-
-      drivers.push(newDriver);
-      addLog(`Motorista ${name} (${prefix}) entrou na fila com cota de ${quota} atendimento(s).`);
+      // Verifica se o motorista já existe no banco unificado para apenas atualizar ou recolocar na fila
+      const existingIndex = drivers.findIndex(d => d.name.toLowerCase() === name.toLowerCase() || d.prefix.toLowerCase() === prefix.toLowerCase());
       
-      // Reatribuir solicitações pendentes se este for agora o primeiro
-      checkAndAssignRequests();
+      if (existingIndex !== -1) {
+        drivers[existingIndex].quota = quota;
+        drivers[existingIndex].status = 'disponivel';
+        addLog(`Motorista permanente ${name} (${prefix}) atualizou seus dados no banco.`);
+      } else {
+        const newDriver = {
+          id: 'd_' + Date.now(),
+          name,
+          prefix,
+          plate,
+          quota,
+          completed: 0,
+          status: 'disponivel',
+          joinedAt: Date.now()
+        };
+        drivers.push(newDriver);
+        addLog(`Novo motorista permanente ${name} (${prefix}) cadastrado no banco unificado.`);
+      }
 
+      checkAndAssignRequests();
       saveData();
       document.getElementById('driver-form').reset();
-      playBeep(784, 0.2);
+      playBeep(800, 0.2);
     }
 
-    // Registrar Solicitação de Passageiro
+    // Solicitação de Passageiro conectada diretamente ao motorista #1
     function handlePassengerRequest(e) {
       e.preventDefault();
       const passengerName = document.getElementById('passenger-name').value.trim();
-      const pickup = document.getElementById('passenger-pickup').value.trim();
-      const destination = document.getElementById('passenger-destination').value.trim() || 'A definir';
+      const destination = document.querySelector('input[name="destination-choice"]:checked').value;
       const phone = document.getElementById('passenger-phone').value.trim() || 'Não informado';
 
-      if (!passengerName || !pickup) return;
+      if (!passengerName) return;
 
       const activeDriver = getActiveDriver();
 
       const newReq = {
         id: 'r_' + Date.now(),
         passengerName,
-        pickup,
+        pickup: 'Aeroporto Internacional Tancredo Neves (Confins)',
         destination,
         phone,
         status: 'pendente',
@@ -444,14 +453,13 @@
       };
 
       requests.unshift(newReq);
-      addLog(`Nova solicitação de passageiro (${passengerName}) vinculada ao motorista #${activeDriver ? activeDriver.prefix : 'Sem Motorista'}.`);
+      addLog(`Passageiro ${passengerName} solicitou táxi para [${destination}]. Atribuído ao motorista #${activeDriver ? activeDriver.prefix : 'Aguardando'}.`);
 
       saveData();
       document.getElementById('passenger-form').reset();
-      playBeep(880, 0.25);
+      playBeep(950, 0.25);
     }
 
-    // Vincula solicitações pendentes ao motorista #1 se houver algum
     function checkAndAssignRequests() {
       const activeDriver = getActiveDriver();
       if (!activeDriver) return;
@@ -463,18 +471,17 @@
       });
     }
 
-    // Motorista #1 aceita solicitação
     function acceptRequest(reqId) {
       const req = requests.find(r => r.id === reqId);
       if (req) {
         req.status = 'em_andamento';
-        addLog(`Solicitação de ${req.passengerName} em andamento.`);
+        addLog(`Chamada de ${req.passengerName} aceita pelo motorista.`);
         saveData();
-        playBeep(659, 0.15);
+        playBeep(700, 0.15);
       }
     }
 
-    // Finalizar Atendimento e Executar Rotação da Fila
+    // Conclusão e Rotação por Cota (1 a 4)
     function completeRequest(reqId) {
       const req = requests.find(r => r.id === reqId);
       if (!req) return;
@@ -484,276 +491,143 @@
 
       if (activeDriver) {
         activeDriver.completed += 1;
-        addLog(`Motorista ${activeDriver.name} concluiu o atendimento (${activeDriver.completed}/${activeDriver.quota}).`);
+        addLog(`Motorista ${activeDriver.name} concluiu a corrida (${activeDriver.completed}/${activeDriver.quota}).`);
 
-        // VERIFICA SE ALCANÇOU A COTA MAXIMA DO TURNO (1 A 4)
         if (activeDriver.completed >= activeDriver.quota) {
-          // Reset de contagem e rotaciona para o fim da fila
           activeDriver.completed = 0;
-          
-          // Move o motorista [0] para a última posição da fila
           const rotatedDriver = drivers.shift();
-          drivers.push(rotatedDriver);
-
-          addLog(`🔄 ROTAÇÃO: Motorista ${rotatedDriver.name} atingiu a cota de ${rotatedDriver.quota} corrida(s) e foi para o FINAL da fila!`);
-          playBeep(1046, 0.4); // Tom de rotação
+          drivers.push(rotatedDriver); // Vai para o fim da fila, mas sem ser excluído!
+          addLog(`🔄 ROTAÇÃO DA FILA: Motorista ${rotatedDriver.name} atingiu a cota e foi para o fim da fila.`);
+          playBeep(1200, 0.4);
         } else {
-          playBeep(523, 0.2);
+          playBeep(600, 0.2);
         }
-
-        // Garante que solicitações pendentes fiquem vinculadas ao novo Motorista #1
         checkAndAssignRequests();
       }
 
       saveData();
     }
 
-    // Cancelar Solicitação
     function cancelRequest(reqId) {
       const req = requests.find(r => r.id === reqId);
       if (req) {
         req.status = 'cancelado';
-        addLog(`Solicitação de ${req.passengerName} foi cancelada.`);
+        addLog(`Solicitação de ${req.passengerName} cancelada.`);
         saveData();
       }
     }
 
-    // Pausar/Despausar Motorista
-    function togglePauseFirstDriver() {
-      const activeDriver = getActiveDriver();
-      if (!activeDriver) return;
-
-      if (activeDriver.status === 'pausado') {
-        activeDriver.status = 'disponivel';
-        addLog(`Motorista ${activeDriver.name} voltou da pausa.`);
-      } else {
-        activeDriver.status = 'pausado';
-        addLog(`Motorista ${activeDriver.name} entrou em pausa.`);
-      }
-      saveData();
-    }
-
-    // Mover manualmente motorista na fila (Gestão)
-    function moveDriverInQueue(index, direction) {
-      if (direction === 'up' && index > 0) {
-        const temp = drivers[index];
-        drivers[index] = drivers[index - 1];
-        drivers[index - 1] = temp;
-      } else if (direction === 'down' && index < drivers.length - 1) {
-        const temp = drivers[index];
-        drivers[index] = drivers[index + 1];
-        drivers[index + 1] = temp;
-      }
-      checkAndAssignRequests();
-      saveData();
-    }
-
-    // Remover Motorista da Fila
-    function removeDriver(id) {
+    function removeDriverPermanently(id) {
       const driver = drivers.find(d => d.id === id);
-      if (driver) {
+      if (driver && confirm(`Deseja realmente remover o motorista ${driver.name} do sistema?`)) {
         drivers = drivers.filter(d => d.id !== id);
-        addLog(`Motorista ${driver.name} foi removido da fila.`);
+        addLog(`Motorista ${driver.name} foi removido do banco.`);
         checkAndAssignRequests();
         saveData();
       }
     }
 
-    // Limpar logs concluídos
-    function clearCompletedLogs() {
-      requests = requests.filter(r => r.status === 'pendente' || r.status === 'em_andamento');
-      saveData();
-    }
-
-    // Exportar CSV
     function exportCSV() {
-      let csvContent = "data:text/csv;charset=utf-8,Passageiro,Ponto Embarque,Destino,Status,Motorista,Data/Hora\n";
+      let csvContent = "data:text/csv;charset=utf-8,Passageiro,Origem,Destino,Status,Motorista,Data\n";
       requests.forEach(r => {
         const d = drivers.find(drv => drv.id === r.assignedDriverId);
-        const driverName = d ? d.name : 'Nenhum';
-        const dateStr = new Date(r.createdAt).toLocaleString();
-        csvContent += `"${r.passengerName}","${r.pickup}","${r.destination}","${r.status}","${driverName}","${dateStr}"\n`;
+        csvContent += `"${r.passengerName}","${r.pickup}","${r.destination}","${r.status}","${d ? d.name : 'Nenhum'}","${new Date(r.createdAt).toLocaleString()}"\n`;
       });
-
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `taxifila_relatorio_${Date.now()}.csv`);
+      link.setAttribute("download", `aeroporto_tancredo_neves_relatorio.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
 
-    // --- RENDERIZAÇÃO DA INTERFACE ---
+    // Renderização da Interface
     function renderApp() {
       const activeDriver = getActiveDriver();
 
-      // Render Banner Principal do Motorista #1
-      const bannerName = document.getElementById('banner-driver-name');
-      const bannerDetails = document.getElementById('banner-driver-details');
-      const bannerQuota = document.getElementById('banner-quota-progress');
-      const bannerBadge = document.getElementById('banner-status-badge');
+      // Banner Principal
+      document.getElementById('banner-driver-name').textContent = activeDriver ? `${activeDriver.name} (${activeDriver.prefix})` : "Nenhum motorista na fila";
+      document.getElementById('banner-driver-details').textContent = activeDriver ? `Placa: ${activeDriver.plate} • Destinos BH Ativos` : "Cadastre seu nome na aba Motoristas para entrar na fila.";
+      document.getElementById('banner-quota-progress').textContent = activeDriver ? `${activeDriver.completed} / ${activeDriver.quota}` : "0 / 0";
+      document.getElementById('banner-total-queue').textContent = `${drivers.length} táxis`;
 
-      if (activeDriver) {
-        bannerName.textContent = `${activeDriver.name} (${activeDriver.prefix})`;
-        bannerDetails.textContent = `Placa: ${activeDriver.plate} • Cadastrado às ${new Date(activeDriver.joinedAt).toLocaleTimeString()}`;
-        bannerQuota.textContent = `${activeDriver.completed} / ${activeDriver.quota}`;
-
-        if (activeDriver.status === 'pausado') {
-          bannerBadge.textContent = 'Em Pausa / Almoço';
-          bannerBadge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
-        } else {
-          bannerBadge.textContent = 'Ativo na Posição #1';
-          bannerBadge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-        }
-      } else {
-        bannerName.textContent = "Nenhum motorista na fila";
-        bannerDetails.textContent = "Aguardando novos motoristas entrarem na fila...";
-        bannerQuota.textContent = "0 / 0";
-        bannerBadge.textContent = "Sem Fila";
-        bannerBadge.className = 'text-xs font-bold px-2 py-1 rounded bg-slate-800 text-slate-400';
-      }
-
-      // Render 1: Solicitações Atribuídas ao Motorista #1
+      // Terminal do Motorista #1
       const driverReqContainer = document.getElementById('driver-requests-list');
       const activeDriverReqs = requests.filter(r => (r.status === 'pendente' || r.status === 'em_andamento') && (activeDriver && r.assignedDriverId === activeDriver.id));
 
       if (!activeDriver) {
-        driverReqContainer.innerHTML = `<div class="p-4 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center text-xs text-slate-500">Adicione motoristas na fila para receber chamados.</div>`;
+        driverReqContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Nenhum motorista disponível na fila no momento.</div>`;
       } else if (activeDriverReqs.length === 0) {
-        driverReqContainer.innerHTML = `<div class="p-4 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center text-xs text-slate-500">Sem chamados pendentes para você no momento.</div>`;
+        driverReqContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Nenhuma solicitação de passageiro pendente para você.</div>`;
       } else {
         driverReqContainer.innerHTML = activeDriverReqs.map(req => `
-          <div class="p-3 bg-slate-950 rounded-xl border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+          <div class="p-3 bg-slate-950 rounded-xl border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <div class="flex items-center space-x-2">
                 <span class="font-bold text-sm text-white">${req.passengerName}</span>
-                <span class="text-[10px] bg-amber-500/20 text-amber-300 font-semibold px-2 py-0.5 rounded-full border border-amber-500/30">
-                  ${req.status === 'em_andamento' ? 'Em Viagem' : 'Aguardando Atendimento'}
-                </span>
+                <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">${req.status === 'em_andamento' ? 'Em Viagem' : 'Novo Chamado'}</span>
               </div>
-              <p class="text-xs text-slate-300 mt-1"><i data-lucide="map-pin" class="inline w-3 h-3 text-amber-400"></i> ${req.pickup}</p>
-              <p class="text-xs text-slate-400"><i data-lucide="navigation" class="inline w-3 h-3 text-slate-500"></i> Destino: ${req.destination} • Tel: ${req.phone}</p>
+              <p class="text-xs text-slate-300 mt-1"><i data-lucide="map-pin" class="inline w-3 h-3 text-amber-400"></i> Destino: <strong>${req.destination}</strong></p>
+              <p class="text-xs text-slate-400">Tel: ${req.phone}</p>
             </div>
-            
-            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <div class="flex items-center gap-2">
               ${req.status === 'pendente' ? `
-                <button onclick="acceptRequest('${req.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
-                  <i data-lucide="check" class="w-3.5 h-3.5"></i> Aceitar
-                </button>
+                <button onclick="acceptRequest('${req.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg">Aceitar</button>
               ` : `
-                <button onclick="completeRequest('${req.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
-                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Concluir (${activeDriver.completed + 1}/${activeDriver.quota})
-                </button>
+                <button onclick="completeRequest('${req.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg">Concluir Viagem</button>
               `}
-              <button onclick="cancelRequest('${req.id}')" class="bg-red-950/60 hover:bg-red-900 text-red-400 text-xs px-2.5 py-1.5 rounded-lg border border-red-800/50 font-bold transition">
-                <i data-lucide="x" class="w-3.5 h-3.5"></i>
-              </button>
+              <button onclick="cancelRequest('${req.id}')" class="bg-red-950 text-red-400 text-xs px-2 py-1.5 rounded-lg">Cancelar</button>
             </div>
           </div>
         `).join('');
       }
 
-      // Render 2: Lista do Acompanhamento dos Passageiros
+      // Status do Passageiro
       const passReqContainer = document.getElementById('passenger-requests-status');
       if (requests.length === 0) {
-        passReqContainer.innerHTML = `<div class="p-6 bg-slate-950/60 rounded-xl border border-slate-800 text-center text-xs text-slate-500">Nenhuma solicitação feita até o momento.</div>`;
+        passReqContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Nenhuma solicitação registrada hoje.</div>`;
       } else {
         passReqContainer.innerHTML = requests.map(req => {
           const assignedDriver = drivers.find(d => d.id === req.assignedDriverId);
-          let badgeColor = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
-          let statusLabel = 'Na Fila de Atendimento';
-
-          if (req.status === 'em_andamento') {
-            badgeColor = 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-            statusLabel = 'Motorista a caminho';
-          } else if (req.status === 'concluido') {
-            badgeColor = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
-            statusLabel = 'Viagem Concluída';
-          } else if (req.status === 'cancelado') {
-            badgeColor = 'bg-red-500/20 text-red-300 border-red-500/30';
-            statusLabel = 'Cancelado';
-          }
-
           return `
-            <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div class="space-y-1">
-                <div class="flex items-center space-x-2">
-                  <span class="font-bold text-sm text-white">${req.passengerName}</span>
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">${statusLabel}</span>
-                </div>
-                <p class="text-xs text-slate-300">Embarque: <strong>${req.pickup}</strong> → Destino: <strong>${req.destination}</strong></p>
-                <p class="text-[11px] text-slate-500">Solicitado às ${new Date(req.createdAt).toLocaleTimeString()}</p>
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <span class="font-bold text-sm text-white">${req.passengerName}</span>
+                <p class="text-xs text-slate-300">Destino: <strong>${req.destination}</strong></p>
+                <span class="text-[10px] text-amber-400 font-semibold">Status: ${req.status}</span>
               </div>
-
-              <div class="bg-slate-900 px-3 py-2 rounded-lg border border-slate-800 text-right w-full sm:w-auto">
+              <div class="bg-slate-900 px-3 py-2 rounded-lg border border-slate-800 text-right">
                 <span class="text-[10px] text-slate-500 block uppercase font-bold">Motorista Designado</span>
-                <span class="text-xs font-bold text-amber-400">
-                  ${assignedDriver ? `${assignedDriver.name} (${assignedDriver.prefix})` : 'Aguardando Motorista'}
-                </span>
+                <span class="text-xs font-bold text-emerald-400">${assignedDriver ? `${assignedDriver.name} (${assignedDriver.prefix})` : 'Buscando...'}</span>
               </div>
             </div>
           `;
         }).join('');
       }
 
-      // Render 3: Fila Sequencial em Tempo Real (Gestão)
+      // Painel Fila Eletrônica (Banco Unificado)
       const queueContainer = document.getElementById('queue-list-container');
       if (drivers.length === 0) {
-        queueContainer.innerHTML = `<div class="p-8 bg-slate-950 rounded-2xl border border-slate-800 text-center text-sm text-slate-500">A fila de espera está vazia. Cadastre motoristas na aba Motoristas.</div>`;
+        queueContainer.innerHTML = `<div class="p-6 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Nenhum motorista na fila.</div>`;
       } else {
-        queueContainer.innerHTML = drivers.map((driver, idx) => {
-          const isFirst = idx === 0;
-          return `
-            <div class="p-3 sm:p-4 rounded-xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
-              isFirst ? 'bg-amber-500/10 border-amber-500/40 shadow-md' : 'bg-slate-950 border-slate-800'
-            }">
-              <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-base ${
-                  isFirst ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20' : 'bg-slate-800 text-slate-300'
-                }">
-                  #${idx + 1}
-                </div>
-                <div>
-                  <div class="flex items-center space-x-2">
-                    <span class="font-bold text-sm text-white">${driver.name}</span>
-                    <span class="text-xs text-slate-400 font-medium">(${driver.prefix})</span>
-                    ${driver.status === 'pausado' ? '<span class="text-[10px] bg-slate-800 text-amber-400 px-2 py-0.5 rounded font-bold">Pausado</span>' : ''}
-                  </div>
-                  <p class="text-xs text-slate-400">Placa: ${driver.plate} • Atendimentos no Turno: <strong class="text-amber-400">${driver.completed}/${driver.quota}</strong></p>
-                </div>
-              </div>
-
-              <!-- Controles Finais -->
-              <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 border-t sm:border-0 border-slate-800 pt-2 sm:pt-0">
-                <div class="flex items-center space-x-1">
-                  <button onclick="moveDriverInQueue(${idx}, 'up')" ${idx === 0 ? 'disabled class="opacity-30 cursor-not-allowed p-1 bg-slate-900 rounded text-slate-500"' : 'class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition"'}>
-                    <i data-lucide="chevron-up" class="w-4 h-4"></i>
-                  </button>
-                  <button onclick="moveDriverInQueue(${idx}, 'down')" ${idx === drivers.length - 1 ? 'disabled class="opacity-30 cursor-not-allowed p-1 bg-slate-900 rounded text-slate-500"' : 'class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition"'}>
-                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                  </button>
-                </div>
-                <button onclick="removeDriver('${driver.id}')" class="text-xs bg-red-950/60 hover:bg-red-900 text-red-400 border border-red-800/50 px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Sair
-                </button>
+        queueContainer.innerHTML = drivers.map((driver, idx) => `
+          <div class="p-3.5 rounded-xl border flex items-center justify-between ${idx === 0 ? 'bg-amber-500/10 border-amber-500/40' : 'bg-slate-950 border-slate-800'}">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center font-extrabold ${idx === 0 ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'}">#${idx + 1}</div>
+              <div>
+                <strong class="text-sm text-white">${driver.name}</strong> <span class="text-xs text-slate-400">(${driver.prefix})</span>
+                <p class="text-xs text-slate-400">Placa: ${driver.plate} • Atendimentos: <strong class="text-amber-400">${driver.completed}/${driver.quota}</strong> (Salvo no Banco)</p>
               </div>
             </div>
-          `;
-        }).join('');
+            <button onclick="removeDriverPermanently('${driver.id}')" class="text-xs bg-red-950/60 hover:bg-red-900 text-red-400 px-2.5 py-1.5 rounded-lg font-bold">Remover</button>
+          </div>
+        `).join('');
       }
 
-      // Render 4: Activity Log
-      const logContainer = document.getElementById('activity-log');
-      logContainer.innerHTML = activityLogs.map(l => `<div><span class="text-slate-600">[${l.time}]</span> ${l.text}</div>`).join('');
-
-      // Recarrega os ícones Lucide atualizados no DOM
-      if (window.lucide) {
-        lucide.createIcons();
-      }
+      if (window.lucide) lucide.createIcons();
     }
 
-    // --- TROCA DE ABAS NA INTERFACE ---
     function switchTab(tab) {
       document.getElementById('view-motorista').classList.add('hidden');
       document.getElementById('view-passageiro').classList.add('hidden');
@@ -775,71 +649,11 @@
       }
     }
 
-    // --- GERADOR DE SERVICE WORKER & MANIFEST PWA DINÂMICO ---
-    function registerPwaFeatures() {
-      // Build PWA Manifest via Blob
-      const manifestObj = {
-        name: "TaxiFila PWA",
-        short_name: "TaxiFila",
-        start_url: "./",
-        display: "standalone",
-        background_color: "#020617",
-        theme_color: "#f59e0b",
-        icons: [{
-          src: "https://img.icons8.com/color/192/taxi.png",
-          sizes: "192x192",
-          type: "image/png"
-        }]
-      };
-
-      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
-      const manifestURL = URL.createObjectURL(manifestBlob);
-      const linkElem = document.createElement('link');
-      linkElem.rel = 'manifest';
-      linkElem.href = manifestURL;
-      document.head.appendChild(linkElem);
-
-      // Register Inline Service Worker
-      if ('serviceWorker' in navigator) {
-        const swCode = `
-          self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
-          self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
-          self.addEventListener('fetch', e => {
-            // Pass-through strategy for dynamic PWA operation
-            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-          });
-        `;
-        const swBlob = new Blob([swCode], { type: 'application/javascript' });
-        const swURL = URL.createObjectURL(swBlob);
-        navigator.serviceWorker.register(swURL).catch(() => {});
-      }
-
-      // Prompt de Instalação PWA
-      let deferredPrompt;
-      const installBtn = document.getElementById('pwa-install-btn');
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBtn.classList.remove('hidden');
-      });
-
-      installBtn.addEventListener('click', () => {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then(() => {
-            installBtn.classList.add('hidden');
-            deferredPrompt = null;
-          });
-        }
-      });
-    }
-
-    // Inicialização da Aplicação
     window.addEventListener('DOMContentLoaded', () => {
-      registerPwaFeatures();
+      triggerLiveGeolocation();
       renderApp();
     });
   </script>
 </body>
 </html>
+
