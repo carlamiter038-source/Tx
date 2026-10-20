@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TaxiFila Aeroporto - Conexão por Telefone</title>
+  <title>Aeroporto Tancredo Neves - Fila Única Unificada</title>
   
   <meta name="theme-color" content="#f59e0b">
-  <meta name="description" content="Fila Eletrônica de Táxi com Conexão por Número de Telefone - Aeroporto Tancredo Neves.">
+  <meta name="description" content="Fila Única Eletrônica de Táxi e Passageiros - Aeroporto Tancredo Neves.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -23,469 +23,280 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
-  <!-- HEADER -->
+  <!-- HEADER ÚNICO -->
   <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <div class="bg-amber-500 text-slate-950 p-2 rounded-xl shadow-lg shadow-amber-500/20 font-black">
           <i data-lucide="plane-takeoff" class="w-6 h-6"></i>
         </div>
         <div>
           <h1 class="font-extrabold text-base sm:text-lg text-amber-400 tracking-tight leading-none">Aeroporto Tancredo Neves</h1>
-          <p class="text-xs text-slate-400 font-medium">Conexão Direta por Telefone</p>
+          <p class="text-xs text-slate-400 font-medium">Fila Única Eletrônica (Motoristas & Passageiros)</p>
         </div>
       </div>
-
-      <!-- Navegação de Abas -->
-      <nav class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs sm:text-sm font-semibold">
-        <button onclick="switchTab('motorista')" id="nav-motorista" class="px-3 py-1.5 rounded-lg transition-all text-amber-400 bg-slate-800 flex items-center gap-1.5">
-          <i data-lucide="car" class="w-4 h-4"></i> Motoristas
-        </button>
-        <button onclick="switchTab('passageiro')" id="nav-passageiro" class="px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
-          <i data-lucide="user-check" class="w-4 h-4"></i> Passageiros
-        </button>
-        <button onclick="switchTab('gestao')" id="nav-gestao" class="px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
-          <i data-lucide="sliders" class="w-4 h-4"></i> Fila Geral
-        </button>
-      </nav>
+      <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistema Ativo
+      </div>
     </div>
   </header>
 
-  <!-- CONTEÚDO PRINCIPAL -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  <!-- CONTEÚDO PRINCIPAL (TELA ÚNICA) -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-    <!-- STATUS LOCALIZAÇÃO -->
-    <div class="bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center space-x-3 w-full md:w-auto">
+    <!-- STATUS LOCALIZAÇÃO AEROPORTO -->
+    <div class="bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 shadow-xl flex items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
         <div class="bg-amber-500/20 text-amber-400 p-3 rounded-xl border border-amber-500/30">
           <i data-lucide="map-pin" class="w-6 h-6"></i>
         </div>
         <div>
-          <span class="text-[10px] uppercase font-extrabold text-amber-400 tracking-wider">Ponto de Embarque Oficial</span>
-          <h2 class="text-sm sm:text-base font-bold text-white">Aeroporto Internacional Tancredo Neves (Confins - MG)</h2>
-          <p class="text-xs text-slate-400">Coordenadas de despacho ativo: -19.6244, -43.9675</p>
+          <span class="text-[10px] uppercase font-extrabold text-amber-400 tracking-wider">Localização Oficial</span>
+          <h2 class="text-sm sm:text-base font-bold text-white">Aeroporto Internacional Tancredo Neves (Confins)</h2>
+          <p class="text-xs text-slate-400">Coordenadas: -19.6244, -43.9675 (Terminal de Atendimento)</p>
         </div>
       </div>
     </div>
 
-    <!-- BANNER PRIMEIRO DA FILA -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
-        <div class="flex items-center space-x-4 w-full md:w-auto">
-          <div class="relative">
-            <div class="w-16 h-16 rounded-2xl bg-amber-500 text-slate-950 font-black text-2xl flex items-center justify-center shadow-lg shadow-amber-500/30">#1</div>
-            <span class="absolute -top-1 -right-1 flex h-4 w-4">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
-            </span>
+    <!-- FORMULÁRIO DE CADASTRO NA FILA ÚNICA -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+      <div class="border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-lg text-amber-400 flex items-center gap-2">
+          <i data-lucide="user-plus" class="w-5 h-5"></i> Entrar na Fila Única
+        </h3>
+        <p class="text-xs text-slate-400 mt-1">Selecione seu perfil (Motorista ou Passageiro), digite seus dados e entre imediatamente na fila eletrônica compartilhada.</p>
+      </div>
+
+      <form id="fila-form" onsubmit="handleFilaRegister(event)" class="space-y-4">
+        <!-- Seletor de Perfil -->
+        <div class="grid grid-cols-2 gap-3">
+          <label class="cursor-pointer">
+            <input type="radio" name="perfil-choice" value="motorista" class="peer hidden" checked onchange="togglePerfilFields()">
+            <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 peer-checked:border-amber-500 transition flex items-center justify-center gap-2">
+              <i data-lucide="car" class="w-4 h-4"></i> Sou Motorista de Táxi
+            </div>
+          </label>
+          <label class="cursor-pointer">
+            <input type="radio" name="perfil-choice" value="passageiro" class="peer hidden" onchange="togglePerfilFields()">
+            <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-emerald-500 peer-checked:text-slate-950 peer-checked:border-emerald-500 transition flex items-center justify-center gap-2">
+              <i data-lucide="user" class="w-4 h-4"></i> Sou Passageiro
+            </div>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Nome Completo</label>
+            <input type="text" id="input-name" required placeholder="Ex: Carlos Eduardo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
           </div>
           <div>
-            <span class="bg-amber-400/20 text-amber-300 text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30">PRIMEIRO DA FILA ATUAL</span>
-            <h3 id="banner-driver-name" class="text-xl sm:text-2xl font-black text-white mt-1">Nenhum motorista na fila</h3>
-            <p id="banner-driver-details" class="text-xs sm:text-sm text-slate-400">Cadastre seu nome e telefone para entrar na fila eletrônica.</p>
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Número de Telefone / WhatsApp</label>
+            <input type="tel" id="input-phone" required placeholder="(31) 99999-8888" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
           </div>
         </div>
 
-        <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800">
-          <div class="text-center px-3">
-            <span class="text-[10px] text-slate-400 block uppercase font-bold">Cota (1 a 4)</span>
-            <span id="banner-quota-progress" class="text-lg font-extrabold text-amber-400">0 / 0</span>
+        <!-- Campos exclusivos para Motorista -->
+        <div id="fields-motorista" class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+          <div>
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Prefixo do Táxi</label>
+            <input type="text" id="input-prefix" placeholder="Ex: T-102" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
           </div>
-          <div class="h-8 w-px bg-slate-800"></div>
-          <div class="text-center px-3">
-            <span class="text-[10px] text-slate-400 block uppercase font-bold">Fila Total</span>
-            <span id="banner-total-queue" class="text-lg font-extrabold text-emerald-400">0 táxis</span>
+          <div>
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Placa</label>
+            <input type="text" id="input-plate" placeholder="Ex: QX-3820" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+          </div>
+          <div class="col-span-2">
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Cota de Atendimentos por Turno (1 a 4)</label>
+            <div class="grid grid-cols-4 gap-2">
+              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="1" class="peer hidden" checked><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">1 Corrida</div></label>
+              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="2" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">2 Corridas</div></label>
+              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="3" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">3 Corridas</div></label>
+              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="4" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">4 Corridas</div></label>
+            </div>
           </div>
         </div>
-      </div>
+
+        <!-- Campos exclusivos para Passageiro (2 Opções de Destino) -->
+        <div id="fields-passageiro" class="hidden space-y-3 pt-2 border-t border-slate-800">
+          <label class="text-xs text-slate-400 font-semibold block">Escolha o Destino em Belo Horizonte:</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
+              <input type="radio" name="destination-choice" value="Rodoviária de Belo Horizonte" class="text-emerald-500" checked>
+              <div class="text-xs">
+                <strong class="text-white block">Rodoviária de BH</strong>
+                <span class="text-slate-400">Praça Rio Branco, Centro</span>
+              </div>
+            </label>
+            <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
+              <input type="radio" name="destination-choice" value="Avenida Álvares Cabral Belo Horizonte" class="text-emerald-500">
+              <div class="text-xs">
+                <strong class="text-white block">Av. Álvares Cabral</strong>
+                <span class="text-slate-400">Região Central / Lourdes</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 text-sm">
+          <i data-lucide="arrow-right-circle" class="w-4 h-4"></i> Entrar na Fila Única Compartilhada
+        </button>
+      </form>
     </div>
 
-    <!-- SEÇÃO 1: MOTORISTA -->
-    <section id="view-motorista" class="space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Cadastro Motorista com Telefone -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-          <h3 class="font-bold text-lg text-amber-400 flex items-center gap-2">
-            <i data-lucide="phone-call" class="w-5 h-5"></i> Registro do Motorista
-          </h3>
-          <p class="text-xs text-slate-400">Digite seu nome e número de telefone para conectar-se diretamente aos passageiros.</p>
-          
-          <form id="driver-form" onsubmit="handleDriverRegister(event)" class="space-y-3">
-            <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Seu Nome</label>
-              <input type="text" id="driver-name" required placeholder="Ex: Carlos Eduardo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Número de Telefone / WhatsApp</label>
-              <input type="tel" id="driver-phone" required placeholder="(31) 99999-8888" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-xs text-slate-400 font-semibold mb-1 block">Prefixo</label>
-                <input type="text" id="driver-prefix" required placeholder="Ex: T-102" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-              </div>
-              <div>
-                <label class="text-xs text-slate-400 font-semibold mb-1 block">Placa</label>
-                <input type="text" id="driver-plate" placeholder="Ex: QX-3820" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-              </div>
-            </div>
-
-            <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Cota de Atendimentos por Turno (1 a 4)</label>
-              <div class="grid grid-cols-4 gap-2">
-                <label class="cursor-pointer"><input type="radio" name="quota-choice" value="1" class="peer hidden" checked><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">1</div></label>
-                <label class="cursor-pointer"><input type="radio" name="quota-choice" value="2" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">2</div></label>
-                <label class="cursor-pointer"><input type="radio" name="quota-choice" value="3" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">3</div></label>
-                <label class="cursor-pointer"><input type="radio" name="quota-choice" value="4" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">4</div></label>
-              </div>
-            </div>
-
-            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
-              <i data-lucide="check-circle" class="w-4 h-4"></i> Entrar na Fila com Meu Telefone
-            </button>
-          </form>
-        </div>
-
-        <!-- Terminal do Motorista -->
-        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 class="font-bold text-lg text-white flex items-center gap-2">
-              <i data-lucide="radio" class="w-5 h-5 text-amber-400"></i> Suas Solicitações de Passageiros (Posição #1)
-            </h3>
-            <span class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full border border-amber-500/30 font-semibold">Conexão Ativa</span>
-          </div>
-          <div id="driver-requests-list" class="space-y-2 max-h-80 overflow-y-auto pr-1">
-            <!-- Render dinâmico -->
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- SEÇÃO 2: PASSAGEIRO -->
-    <section id="view-passageiro" class="hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Formulário Passageiro com Telefone e 2 Destinos -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-          <div class="border-b border-slate-800 pb-3">
-            <h3 class="font-bold text-lg text-emerald-400 flex items-center gap-2">
-              <i data-lucide="phone-forwarded" class="w-5 h-5"></i> Solicitar Táxi por Telefone
-            </h3>
-            <p class="text-xs text-slate-400 mt-1">Informe seu nome e número de telefone para se conectar ao motorista da vez.</p>
-          </div>
-
-          <form id="passenger-form" onsubmit="handlePassengerRequest(event)" class="space-y-3">
-            <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Seu Nome</label>
-              <input type="text" id="passenger-name" required placeholder="Ex: Mariana Costa" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-            </div>
-            <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Seu Número de Telefone / WhatsApp</label>
-              <input type="tel" id="passenger-phone" required placeholder="(31) 98888-7777" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-            </div>
-
-            <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Partida Fixa:</label>
-              <input type="text" readonly value="Aeroporto Internacional Tancredo Neves" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-amber-300 cursor-not-allowed">
-            </div>
-
-            <!-- 2 Opções de Destino em BH -->
-            <div>
-              <label class="text-xs text-slate-400 font-semibold mb-1 block">Escolha o Destino em Belo Horizonte:</label>
-              <div class="space-y-2">
-                <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
-                  <input type="radio" name="destination-choice" value="Rodoviária de Belo Horizonte" class="text-emerald-500" checked>
-                  <div class="text-xs">
-                    <strong class="text-white block">Rodoviária de Belo Horizonte</strong>
-                    <span class="text-slate-400">Praça Rio Branco, Centro - BH</span>
-                  </div>
-                </label>
-
-                <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
-                  <input type="radio" name="destination-choice" value="Avenida Álvares Cabral Belo Horizonte" class="text-emerald-500">
-                  <div class="text-xs">
-                    <strong class="text-white block">Avenida Álvares Cabral</strong>
-                    <span class="text-slate-400">Região Central / Lourdes - BH</span>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 text-sm">
-              <i data-lucide="send" class="w-4 h-4"></i> Conectar com o Motorista (#1)
-            </button>
-          </form>
-        </div>
-
-        <!-- Status da Conexão para o Passageiro -->
-        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 class="font-bold text-lg text-white flex items-center gap-2">
-              <i data-lucide="user-check" class="w-5 h-5 text-emerald-400"></i> Seus Chamados e Contato do Motorista Atribuído
-            </h3>
-            <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium">Tempo Real</span>
-          </div>
-
-          <div id="passenger-requests-status" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-            <!-- Render dinâmico -->
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- SEÇÃO 3: GESTÃO -->
-    <section id="view-gestao" class="hidden space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+    <!-- PAINEL DA FILA ÚNICA EM TEMPO REAL -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="font-bold text-lg text-white flex items-center gap-2">
-          <i data-lucide="list-ordered" class="w-5 h-5 text-amber-400"></i> Fila Eletrônica Unificada (Por Telefone)
+          <i data-lucide="list-ordered" class="w-5 h-5 text-amber-400"></i> Fila Única Geral (Banco de Dados Compartilhado)
         </h3>
-        <div id="queue-list-container" class="space-y-3">
-          <!-- Render da fila -->
-        </div>
+        <span id="fila-counter" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium">0 pessoas na fila</span>
       </div>
-    </section>
+
+      <div id="fila-container" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+        <!-- Render dinâmico da fila unificada -->
+      </div>
+    </div>
 
   </main>
 
-  <!-- SCRIPT DE SINCRONIZAÇÃO E TELEFONE -->
-  <script>
-    const STORAGE_KEY_DRIVERS = 'taxifila_phone_drivers_v1';
-    const STORAGE_KEY_REQUESTS = 'taxifila_phone_requests_v1';
-    const channel = new BroadcastChannel('taxifila_phone_channel');
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 border-t border-slate-800 py-4 mt-auto">
+    <div class="max-w-4xl mx-auto px-4 text-center text-xs text-slate-500">
+      <p>© Aeroporto Tancredo Neves - Fila Única Integrada PWA</p>
+    </div>
+  </footer>
 
-    let drivers = JSON.parse(localStorage.getItem(STORAGE_KEY_DRIVERS)) || [];
-    let requests = JSON.parse(localStorage.getItem(STORAGE_KEY_REQUESTS)) || [];
+  <!-- SCRIPT DA FILA ÚNICA -->
+  <script>
+    const STORAGE_KEY_FILA = 'aeroporto_fila_unica_v1';
+    const channel = new BroadcastChannel('aeroporto_fila_channel');
+
+    let fila = JSON.parse(localStorage.getItem(STORAGE_KEY_FILA)) || [
+      { id: '1', perfil: 'motorista', name: 'Carlos Silveira', phone: '31999991111', prefix: 'CNF-101', plate: 'HMX-4920', quota: 2, completed: 0, status: 'disponivel' },
+      { id: '2', perfil: 'passageiro', name: 'Mariana Costa', phone: '31988882222', destination: 'Rodoviária de Belo Horizonte', status: 'aguardando' }
+    ];
 
     function saveData() {
-      localStorage.setItem(STORAGE_KEY_DRIVERS, JSON.stringify(drivers));
-      localStorage.setItem(STORAGE_KEY_REQUESTS, JSON.stringify(requests));
-      channel.postMessage({ type: 'SYNC' });
-      renderApp();
+      localStorage.setItem(STORAGE_KEY_FILA, JSON.stringify(fila));
+      channel.postMessage({ type: 'SYNC_FILA' });
+      renderFila();
     }
 
     channel.onmessage = (e) => {
-      if (e.data && e.data.type === 'SYNC') {
-        drivers = JSON.parse(localStorage.getItem(STORAGE_KEY_DRIVERS)) || [];
-        requests = JSON.parse(localStorage.getItem(STORAGE_KEY_REQUESTS)) || [];
-        renderApp();
+      if (e.data && e.data.type === 'SYNC_FILA') {
+        fila = JSON.parse(localStorage.getItem(STORAGE_KEY_FILA)) || [];
+        renderFila();
       }
     };
 
-    function getActiveDriver() {
-      return drivers.length > 0 ? drivers[0] : null;
+    function togglePerfilFields() {
+      const perfil = document.querySelector('input[name="perfil-choice"]:checked').value;
+      const mFields = document.getElementById('fields-motorista');
+      const pFields = document.getElementById('fields-passageiro');
+      const submitBtn = document.querySelector('button[type="submit"]');
+
+      if (perfil === 'motorista') {
+        mFields.classList.remove('hidden');
+        pFields.classList.add('hidden');
+        submitBtn.className = "w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 text-sm";
+      } else {
+        mFields.classList.add('hidden');
+        pFields.classList.remove('hidden');
+        submitBtn.className = "w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 text-sm";
+      }
     }
 
-    function handleDriverRegister(e) {
+    function handleFilaRegister(e) {
       e.preventDefault();
-      const name = document.getElementById('driver-name').value.trim();
-      const phone = document.getElementById('driver-phone').value.trim();
-      const prefix = document.getElementById('driver-prefix').value.trim();
-      const plate = document.getElementById('driver-plate').value.trim() || 'CNF-BR';
-      const quota = parseInt(document.querySelector('input[name="quota-choice"]:checked').value);
+      const perfil = document.querySelector('input[name="perfil-choice"]:checked').value;
+      const name = document.getElementById('input-name').value.trim();
+      const phone = document.getElementById('input-phone').value.trim();
 
-      if (!name || !phone || !prefix) return;
+      if (!name || !phone) return;
 
-      const existingIndex = drivers.findIndex(d => d.phone === phone);
-      if (existingIndex !== -1) {
-        drivers[existingIndex].name = name;
-        drivers[existingIndex].prefix = prefix;
-        drivers[existingIndex].quota = quota;
+      let novoItem = {
+        id: 'item_' + Date.now(),
+        perfil,
+        name,
+        phone,
+        status: 'ativo'
+      };
+
+      if (perfil === 'motorista') {
+        novoItem.prefix = document.getElementById('input-prefix').value.trim() || 'CNF-BR';
+        novoItem.plate = document.getElementById('input-plate').value.trim() || 'ABC-1234';
+        novoItem.quota = parseInt(document.querySelector('input[name="quota-choice"]:checked').value);
+        novoItem.completed = 0;
       } else {
-        drivers.push({
-          id: 'd_' + Date.now(),
-          name,
-          phone,
-          prefix,
-          plate,
-          quota,
-          completed: 0,
-          joinedAt: Date.now()
-        });
+        novoItem.destination = document.querySelector('input[name="destination-choice"]:checked').value;
       }
 
-      checkAndAssignRequests();
+      fila.push(novoItem);
       saveData();
-      alert('Cadastro realizado com sucesso na fila do aeroporto!');
+      document.getElementById('fila-form').reset();
+      togglePerfilFields();
+      alert('Cadastrado com sucesso na fila única!');
     }
 
-    function handlePassengerRequest(e) {
-      e.preventDefault();
-      const passengerName = document.getElementById('passenger-name').value.trim();
-      const passengerPhone = document.getElementById('passenger-phone').value.trim();
-      const destination = document.querySelector('input[name="destination-choice"]:checked').value;
-
-      if (!passengerName || !passengerPhone) return;
-
-      const activeDriver = getActiveDriver();
-
-      requests.unshift({
-        id: 'r_' + Date.now(),
-        passengerName,
-        passengerPhone,
-        pickup: 'Aeroporto Internacional Tancredo Neves',
-        destination,
-        status: 'pendente',
-        assignedDriverId: activeDriver ? activeDriver.id : null,
-        createdAt: Date.now()
-      });
-
-      saveData();
-      document.getElementById('passenger-form').reset();
-      alert('Solicitação enviada! Conectado ao motorista da vez.');
-    }
-
-    function checkAndAssignRequests() {
-      const activeDriver = getActiveDriver();
-      if (!activeDriver) return;
-      requests.forEach(r => {
-        if (r.status === 'pendente' && !r.assignedDriverId) {
-          r.assignedDriverId = activeDriver.id;
-        }
-      });
-    }
-
-    function acceptRequest(reqId) {
-      const req = requests.find(r => r.id === reqId);
-      if (req) {
-        req.status = 'em_andamento';
-        saveData();
-      }
-    }
-
-    function completeRequest(reqId) {
-      const req = requests.find(r => r.id === reqId);
-      if (!req) return;
-
-      req.status = 'concluido';
-      const activeDriver = drivers.find(d => d.id === req.assignedDriverId);
-
-      if (activeDriver) {
-        activeDriver.completed += 1;
-        if (activeDriver.completed >= activeDriver.quota) {
-          activeDriver.completed = 0;
-          const rotated = drivers.shift();
-          drivers.push(rotated);
-        }
-        checkAndAssignRequests();
-      }
+    function removerDaFila(id) {
+      fila = fila.filter(item => item.id !== id);
       saveData();
     }
 
-    function cancelRequest(reqId) {
-      const req = requests.find(r => r.id === reqId);
-      if (req) {
-        req.status = 'cancelado';
-        saveData();
-      }
-    }
+    function renderFila() {
+      const container = document.getElementById('fila-container');
+      document.getElementById('fila-counter').textContent = `${fila.length} na fila`;
 
-    function removeDriver(id) {
-      drivers = drivers.filter(d => d.id !== id);
-      checkAndAssignRequests();
-      saveData();
-    }
-
-    function renderApp() {
-      const activeDriver = getActiveDriver();
-
-      document.getElementById('banner-driver-name').textContent = activeDriver ? `${activeDriver.name} (${activeDriver.prefix})` : "Nenhum motorista na fila";
-      document.getElementById('banner-driver-details').textContent = activeDriver ? `Telefone: ${activeDriver.phone} • Destinos BH Ativos` : "Cadastre-se na aba Motoristas.";
-      document.getElementById('banner-quota-progress').textContent = activeDriver ? `${activeDriver.completed} / ${activeDriver.quota}` : "0 / 0";
-      document.getElementById('banner-total-queue').textContent = `${drivers.length} táxis`;
-
-      // Terminal Motorista
-      const driverReqContainer = document.getElementById('driver-requests-list');
-      const myReqs = requests.filter(r => (r.status === 'pendente' || r.status === 'em_andamento') && (activeDriver && r.assignedDriverId === activeDriver.id));
-
-      if (!activeDriver) {
-        driverReqContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Entre na fila para receber chamados.</div>`;
-      } else if (myReqs.length === 0) {
-        driverReqContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Aguardando novos passageiros solicitarem táxi.</div>`;
-      } else {
-        driverReqContainer.innerHTML = myReqs.map(req => `
-          <div class="p-3 bg-slate-950 rounded-xl border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div>
-              <span class="font-bold text-sm text-white">${req.passengerName}</span> <span class="text-xs text-emerald-400 font-bold">(Tel: ${req.passengerPhone})</span>
-              <p class="text-xs text-slate-300 mt-1">Destino: <strong>${req.destination}</strong></p>
-              <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">${req.status === 'em_andamento' ? 'Em Viagem' : 'Novo Chamado'}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              ${req.status === 'pendente' ? `<button onclick="acceptRequest('${req.id}')" class="bg-emerald-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg">Aceitar</button>` : `<button onclick="completeRequest('${req.id}')" class="bg-amber-500 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg">Concluir</button>`}
-              <button onclick="cancelRequest('${req.id}')" class="bg-red-950 text-red-400 text-xs px-2 py-1.5 rounded-lg">Cancelar</button>
-            </div>
-          </div>
-        `).join('');
+      if (fila.length === 0) {
+        container.innerHTML = `<div class="p-6 bg-slate-950 rounded-xl text-center text-xs text-slate-500">A fila única está vazia no momento.</div>`;
+        return;
       }
 
-      // Status Passageiro com Telefone do Motorista
-      const passReqContainer = document.getElementById('passenger-requests-status');
-      if (requests.length === 0) {
-        passReqContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Nenhuma solicitação recente.</div>`;
-      } else {
-        passReqContainer.innerHTML = requests.map(req => {
-          const assignedDriver = drivers.find(d => d.id === req.assignedDriverId);
-          return `
-            <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      container.innerHTML = fila.map((item, idx) => {
+        const isMotorista = item.perfil === 'motorista';
+        const isFirst = idx === 0;
+
+        return `
+          <div class="p-3.5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+            isFirst ? 'bg-amber-500/10 border-amber-500/40 shadow-md' : 'bg-slate-950 border-slate-800'
+          }">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-sm ${
+                isFirst ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'
+              }">
+                #${idx + 1}
+              </div>
               <div>
-                <span class="font-bold text-sm text-white">Passageiro: ${req.passengerName}</span>
-                <p class="text-xs text-slate-300">Destino: <strong>${req.destination}</strong></p>
-                <span class="text-[10px] text-amber-400 font-semibold">Status: ${req.status}</span>
-              </div>
-              <div class="bg-slate-900 px-3 py-2 rounded-lg border border-slate-800 text-right">
-                <span class="text-[10px] text-slate-500 block uppercase font-bold">Motorista Designado</span>
-                <span class="text-xs font-bold text-emerald-400">
-                  ${assignedDriver ? `${assignedDriver.name} - Tel: ${assignedDriver.phone} (${assignedDriver.prefix})` : 'Buscando motorista...'}
-                </span>
+                <div class="flex items-center space-x-2">
+                  <span class="font-bold text-sm text-white">${item.name}</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                    isMotorista ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                  }">
+                    ${isMotorista ? 'Táxi / Motorista' : 'Passageiro'}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  Tel: ${item.phone} 
+                  ${isMotorista ? `• Prefixo: ${item.prefix} • Atendimentos: <strong class="text-amber-400">${item.completed}/${item.quota}</strong>` : `• Destino: <strong class="text-emerald-400">${item.destination}</strong>`}
+                </p>
               </div>
             </div>
-          `;
-        }).join('');
-      }
 
-      // Painel Fila
-      const queueContainer = document.getElementById('queue-list-container');
-      if (drivers.length === 0) {
-        queueContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Fila vazia.</div>`;
-      } else {
-        queueContainer.innerHTML = drivers.map((d, idx) => `
-          <div class="p-3 rounded-xl border flex items-center justify-between ${idx === 0 ? 'bg-amber-500/10 border-amber-500/40' : 'bg-slate-950 border-slate-800'}">
-            <div>
-              <span class="font-extrabold text-amber-400">#${idx + 1}</span> <strong class="text-sm text-white">${d.name}</strong> - <span class="text-xs text-slate-400">Tel: ${d.phone} | Prefixo: ${d.prefix}</span>
-              <p class="text-xs text-slate-400">Atendimentos no turno: <strong class="text-amber-400">${d.completed}/${d.quota}</strong></p>
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <button onclick="removerDaFila('${item.id}')" class="text-xs bg-red-950/60 hover:bg-red-900 text-red-400 border border-red-800/50 px-2.5 py-1.5 rounded-lg font-bold transition">
+                Sair da Fila
+              </button>
             </div>
-            <button onclick="removeDriver('${d.id}')" class="text-xs bg-red-950 text-red-400 px-2 py-1 rounded">Remover</button>
           </div>
-        `).join('');
-      }
+        `;
+      }).join('');
 
       if (window.lucide) lucide.createIcons();
     }
 
-    function switchTab(tab) {
-      document.getElementById('view-motorista').classList.add('hidden');
-      document.getElementById('view-passageiro').classList.add('hidden');
-      document.getElementById('view-gestao').classList.add('hidden');
-
-      document.getElementById('nav-motorista').className = "px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
-      document.getElementById('nav-passageiro').className = "px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
-      document.getElementById('nav-gestao').className = "px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
-
-      if (tab === 'motorista') {
-        document.getElementById('view-motorista').classList.remove('hidden');
-        document.getElementById('nav-motorista').className = "px-3 py-1.5 rounded-lg transition-all text-amber-400 bg-slate-800 flex items-center gap-1.5";
-      } else if (tab === 'passageiro') {
-        document.getElementById('view-passageiro').classList.remove('hidden');
-        document.getElementById('nav-passageiro').className = "px-3 py-1.5 rounded-lg transition-all text-emerald-400 bg-slate-800 flex items-center gap-1.5";
-      } else if (tab === 'gestao') {
-        document.getElementById('view-gestao').classList.remove('hidden');
-        document.getElementById('nav-gestao').className = "px-3 py-1.5 rounded-lg transition-all text-amber-400 bg-slate-800 flex items-center gap-1.5";
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', renderApp);
+    window.addEventListener('DOMContentLoaded', () => {
+      renderFila();
+    });
   </script>
 </body>
 </html>
