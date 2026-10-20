@@ -42,7 +42,7 @@
   <!-- CONTEÚDO PRINCIPAL -->
   <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-    <!-- CARTÃO DE Destaque DO MOTORISTA #1 DA VEZ -->
+    <!-- CARTÃO DE DESTAQUE DO MOTORISTA #1 DA VEZ -->
     <div class="bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/40 rounded-2xl p-5 shadow-xl relative overflow-hidden">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
         <div class="flex items-center space-x-4 w-full md:w-auto">
@@ -113,7 +113,7 @@
           </div>
         </div>
 
-        <!-- FORMULÁRIO DO PASSAGEIRO (AS 2 OPÇÕES DE DESTINO) -->
+        <!-- FORMULÁRIO DO PASSAGEIRO -->
         <div id="fields-passageiro" class="space-y-3 pt-2 border-t border-slate-800">
           <label class="text-xs text-slate-400 font-semibold block">Escolha seu Destino em Belo Horizonte:</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -134,7 +134,7 @@
           </div>
         </div>
 
-        <!-- FORMULÁRIO DO MOTORISTA (CONFIGURAÇÃO DE COTA DE 3 A 4 PASSAGEIROS) -->
+        <!-- FORMULÁRIO DO MOTORISTA -->
         <div id="fields-motorista" class="hidden space-y-3 pt-2 border-t border-slate-800">
           <div class="grid grid-cols-2 gap-3">
             <div>
@@ -195,22 +195,30 @@
       </div>
 
       <div id="passengers-list" class="space-y-3 max-h-60 overflow-y-auto pr-1">
-        <!-- Render dos passageiros da viagem atual -->
+        <!-- Render dos passageiros -->
       </div>
     </div>
 
   </main>
 
-  <!-- LÓGICA DE NUVEM & SINCRONIZAÇÃO DE FILA -->
+  <!-- LÓGICA DE NUVEM & SINCRONIZAÇÃO -->
   <script>
     const BIN_ID = "679f2d6be41b4d34e47cb591"; 
     const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
     const API_UPDATE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
+    // CADASTRO PADRÃO DO MOTORISTA CLENILSON MITER NA PRIMEIRA POSIÇÃO (#1)
     let appState = {
       motoristas: [
-        { id: 'm1', name: 'Carlos Eduardo', phone: '31999991111', prefix: 'CNF-101', plate: 'QX-3820', quota: 3, completed: 0 },
-        { id: 'm2', name: 'Roberto Lima', phone: '31988882222', prefix: 'CNF-205', plate: 'HMX-4920', quota: 4, completed: 0 }
+        { 
+          id: 'm_clenilson', 
+          name: 'Clenilson Miter', 
+          phone: '31984280227', 
+          prefix: 'CNF-01', 
+          plate: 'TAX-2026', 
+          quota: 4, 
+          completed: 0 
+        }
       ],
       passageirosAtuais: []
     };
@@ -222,6 +230,20 @@
           const json = await res.json();
           if (json.record && json.record.appState) {
             appState = json.record.appState;
+            
+            // Garante que o Clenilson continue cadastrado se a fila esvaziar
+            const clenilsonExists = appState.motoristas.some(m => m.phone === '31984280227');
+            if (!clenilsonExists) {
+              appState.motoristas.unshift({
+                id: 'm_clenilson',
+                name: 'Clenilson Miter',
+                phone: '31984280227',
+                prefix: 'CNF-01',
+                plate: 'TAX-2026',
+                quota: 4,
+                completed: 0
+              });
+            }
             renderApp();
           }
         }
@@ -277,7 +299,7 @@
         const activeDriver = appState.motoristas[0];
 
         if (!activeDriver) {
-          alert('Atenção: Não há nenhum motorista na fila no momento. Seu cadastro foi recebido, aguarde a entrada de um táxi.');
+          alert('Atenção: Não há motorista disponível na fila no momento.');
           return;
         }
 
@@ -295,7 +317,7 @@
         appState.passageirosAtuais.push(newPassenger);
         await saveCloudData();
 
-        // REDIRECIONA DIRETO PARA O WHATSAPP DO MOTORISTA #1
+        // DIRECIOMAMENTO AUTOMÁTICO PARA O WHATSAPP DO MOTORISTA #1 (EX: CLENILSON MITER)
         let driverPhone = activeDriver.phone.replace(/\D/g,'');
         if (!driverPhone.startsWith('55') && driverPhone.length >= 10) {
           driverPhone = '55' + driverPhone;
@@ -308,7 +330,7 @@
         window.open(waUrl, '_blank');
 
       } else {
-        // CADASTRO DE MOTORISTA
+        // CADASTRO DE NOVO MOTORISTA
         const prefix = document.getElementById('input-prefix').value.trim() || 'CNF-BR';
         const plate = document.getElementById('input-plate').value.trim() || 'ABC-1234';
         const quota = parseInt(document.querySelector('input[name="quota-choice"]:checked').value);
@@ -326,11 +348,10 @@
         appState.motoristas.push(newDriver);
         await saveCloudData();
         document.getElementById('main-form').reset();
-        alert('Motorista cadastrado com sucesso na fila eletrônica!');
+        alert('Motorista cadastrado com sucesso na fila!');
       }
     }
 
-    // CONCLUIR E PASSAR O POSTO PARA O PRÓXIMO MOTORISTA
     async function concluirEProximoMotorista() {
       if (appState.motoristas.length === 0) return;
 
@@ -342,17 +363,15 @@
         return;
       }
 
-      if (confirm(`Confirmar saída do Motorista ${activeDriver.name} com ${passengerCount} passageiro(s)? A fila vai avançar para o próximo motorista.`)) {
-        // Move o motorista atual para o fim da fila
+      if (confirm(`Confirmar saída do Motorista ${activeDriver.name} com ${passengerCount} passageiro(s)? A fila avançará para o próximo motorista.`)) {
         const rotatedDriver = appState.motoristas.shift();
         rotatedDriver.completed += 1;
         appState.motoristas.push(rotatedDriver);
 
-        // Limpa os passageiros atuais pois a viagem saiu
         appState.passageirosAtuais = [];
         await saveCloudData();
 
-        alert('Viagem concluída! O próximo motorista assumiu o primeiro lugar na fila.');
+        alert('Viagem concluída! Próximo motorista assumiu o lugar #1.');
       }
     }
 
@@ -367,7 +386,6 @@
       const activeDriver = appState.motoristas[0];
       const passengerCount = appState.passageirosAtuais.length;
 
-      // Banner do Motorista #1
       const bannerName = document.getElementById('banner-driver-name');
       const bannerDetails = document.getElementById('banner-driver-details');
       const bannerCount = document.getElementById('banner-passenger-count');
@@ -398,7 +416,7 @@
       document.getElementById('drivers-count').textContent = `${appState.motoristas.length} táxi(s) aguardando`;
 
       if (appState.motoristas.length === 0) {
-        driversContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Nenhum motorista na fila eletrônica.</div>`;
+        driversContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Nenhum motorista na fila.</div>`;
       } else {
         driversContainer.innerHTML = appState.motoristas.map((m, idx) => {
           const isFirst = idx === 0;
