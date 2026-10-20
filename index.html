@@ -57,7 +57,7 @@
           </div>
           <div>
             <span class="bg-amber-400/20 text-amber-300 text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30">
-              PRIMEIRO DA FILA (ATENDIMENTO ATIVO)
+              PRIMEIRO DA FILA (PRÓXIMO A SAIR)
             </span>
             <h2 id="banner-driver-name" class="text-xl sm:text-2xl font-black text-white mt-1">Aguardando motorista ficar online...</h2>
             <p id="banner-driver-details" class="text-xs sm:text-sm text-slate-400">Nenhum motorista ativado na fila no momento.</p>
@@ -66,7 +66,42 @@
 
         <div class="flex flex-col sm:flex-row items-center justify-between md:justify-end w-full md:w-auto gap-3 bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
           <button id="btn-concluir-corrida" onclick="concluirEProximoMotorista()" disabled class="w-full sm:w-auto text-xs bg-slate-800 text-slate-500 cursor-not-allowed font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
-            <i data-lucide="check-circle" class="w-4 h-4"></i> Concluir Corrida & Próximo da Fila
+            <i data-lucide="log-out" class="w-4 h-4"></i> Saí com Passageiro (Avançar Fila)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO DE GERENCIAMENTO RÁPIDO DO MOTORISTA -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+      <div class="border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-lg text-amber-400 flex items-center gap-2">
+          <i data-lucide="sliders" class="w-5 h-5"></i> Controle do Motorista (Sua Posição)
+        </h3>
+        <p class="text-xs text-slate-400 mt-1">Selecione seu nome, escolha sua posição na fila ou acione a saída da corrida.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label class="text-xs text-slate-400 font-semibold mb-1 block">Selecione o Motorista:</label>
+          <select id="select-driver-control" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+            <option value="m_clenilson">Clenilson Santos Miter</option>
+            <option value="m_samuel">Samuel Miter</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs text-slate-400 font-semibold mb-1 block">Definir Posição na Fila:</label>
+          <select id="select-queue-position" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+            <option value="1">1º Lugar (#1)</option>
+            <option value="2">2º Lugar (#2)</option>
+            <option value="offline">Offline / Indisponível</option>
+          </select>
+        </div>
+
+        <div class="flex items-end">
+          <button onclick="aplicarPosicaoMotorista()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow">
+            <i data-lucide="check-square" class="w-4 h-4"></i> Confirmar Posição
           </button>
         </div>
       </div>
@@ -128,7 +163,7 @@
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="font-bold text-lg text-white flex items-center gap-2">
-          <i data-lucide="shield-check" class="w-5 h-5 text-amber-400"></i> Painel de Motoristas Cadastrados (Status da Fila)
+          <i data-lucide="shield-check" class="w-5 h-5 text-amber-400"></i> Fila Eletrônica Atual
         </h3>
         <span id="drivers-online-count" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium">0 online</span>
       </div>
@@ -157,7 +192,6 @@
     const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
     const API_UPDATE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-    // BANCO DE DADOS INICIAL FIXO (MOTORISTAS SOLICITADOS)
     let appState = {
       motoristas: [
         { 
@@ -166,7 +200,7 @@
           phone: '31984280227', 
           prefix: 'CNF-01', 
           status: 'online', 
-          joinedQueueAt: Date.now() - 2000
+          position: 1
         },
         { 
           id: 'm_samuel', 
@@ -174,7 +208,7 @@
           phone: '553191124188', 
           prefix: 'CNF-02', 
           status: 'online', 
-          joinedQueueAt: Date.now() - 1000
+          position: 2
         }
       ]
     };
@@ -209,32 +243,49 @@
       } catch (e) {}
     }
 
-    // ALTERAR STATUS ONLINE/OFFLINE DO MOTORISTA
-    async function toggleDriverStatus(driverId) {
+    // APLICAR POSIÇÃO ESCOLHIDA PELO MOTORISTA
+    async function aplicarPosicaoMotorista() {
+      const driverId = document.getElementById('select-driver-control').value;
+      const targetPos = document.getElementById('select-queue-position').value;
+
       const driver = appState.motoristas.find(m => m.id === driverId);
-      if (driver) {
-        driver.status = (driver.status === 'online') ? 'offline' : 'online';
-        driver.joinedQueueAt = Date.now();
-        await saveCloudData();
+      const otherDriver = appState.motoristas.find(m => m.id !== driverId);
+
+      if (!driver) return;
+
+      if (targetPos === 'offline') {
+        driver.status = 'offline';
+        driver.position = 99;
+      } else {
+        driver.status = 'online';
+        const newPos = parseInt(targetPos);
+        driver.position = newPos;
+
+        if (otherDriver && otherDriver.status === 'online' && otherDriver.position === newPos) {
+          otherDriver.position = newPos === 1 ? 2 : 1;
+        }
       }
+
+      await saveCloudData();
+      alert(`Posição de ${driver.name} atualizada com sucesso!`);
     }
 
-    // ABRIR SOLICITAÇÃO DO PASSAGEIRO NO WHATSAPP DO MOTORISTA #1
+    // SOLICITAÇÃO DO PASSAGEIRO ENVIADA PARA O MOTORISTA #1
     async function handlePassengerSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('pass-name').value.trim();
       const phone = document.getElementById('pass-phone').value.trim();
       const destination = document.querySelector('input[name="destination-choice"]:checked').value;
 
-      // Obtém os motoristas ativos em ordem de entrada na fila
-      const activeDrivers = appState.motoristas.filter(m => m.status === 'online');
+      const activeDrivers = appState.motoristas
+        .filter(m => m.status === 'online')
+        .sort((a, b) => a.position - b.position);
 
       if (activeDrivers.length === 0) {
-        alert('Atenção: Nenhum motorista está online na fila no momento. Tente novamente em instantes.');
+        alert('Atenção: Nenhum motorista está online na fila no momento.');
         return;
       }
 
-      // O Primeiro da Fila (#1)
       const firstDriver = activeDrivers[0];
 
       let cleanPhone = firstDriver.phone.replace(/\D/g,'');
@@ -249,26 +300,32 @@
       window.open(waUrl, '_blank');
     }
 
-    // MOTORISTA #1 DESATIVA/CONCLUI E PASSA PARA O PRÓXIMO DA FILA
+    // BOTÃO "SAÍ COM PASSAGEIRO": AVANÇA AUTOMATICAMENTE O PRÓXIMO MOTORISTA
     async function concluirEProximoMotorista() {
-      const activeDrivers = appState.motoristas.filter(m => m.status === 'online');
+      const activeDrivers = appState.motoristas
+        .filter(m => m.status === 'online')
+        .sort((a, b) => a.position - b.position);
+
       if (activeDrivers.length === 0) return;
 
       const currentFirst = activeDrivers[0];
 
-      if (confirm(`Confirmar conclusão da corrida do Motorista ${currentFirst.name}? Ele irá para o fim da fila para atender o próximo passageiro.`)) {
-        // Atualiza a data de entrada na fila para enviá-lo para o final da fila ativa
-        currentFirst.joinedQueueAt = Date.now();
+      if (confirm(`Confirmar que o Motorista ${currentFirst.name} saiu com o passageiro? A fila vai alternar automaticamente para o próximo.`)) {
+        appState.motoristas.forEach(m => {
+          if (m.status === 'online') {
+            m.position = m.position === 1 ? 2 : 1;
+          }
+        });
+
         await saveCloudData();
-        alert('Corrida finalizada com sucesso! O próximo motorista da fila agora é o #1.');
+        alert('Corrida concluída! O próximo motorista da fila assumiu a posição #1.');
       }
     }
 
     function renderApp() {
-      // Ordena motoristas online por horário de entrada na fila
       const activeDrivers = appState.motoristas
         .filter(m => m.status === 'online')
-        .sort((a, b) => a.joinedQueueAt - b.joinedQueueAt);
+        .sort((a, b) => a.position - b.position);
 
       const bannerName = document.getElementById('banner-driver-name');
       const bannerDetails = document.getElementById('banner-driver-details');
@@ -277,7 +334,7 @@
       if (activeDrivers.length > 0) {
         const firstDriver = activeDrivers[0];
         bannerName.textContent = `${firstDriver.name} (${firstDriver.prefix})`;
-        bannerDetails.textContent = `WhatsApp: ${firstDriver.phone} • Pronto para receber novos chamados no WhatsApp.`;
+        bannerDetails.textContent = `WhatsApp: ${firstDriver.phone} • Pronto para atender o próximo passageiro.`;
         btnConcluir.disabled = false;
         btnConcluir.className = "w-full sm:w-auto text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold px-4 py-2.5 rounded-xl border border-emerald-400 transition flex items-center justify-center gap-2 shadow-lg cursor-pointer";
       } else {
@@ -287,24 +344,28 @@
         btnConcluir.className = "w-full sm:w-auto text-xs bg-slate-800 text-slate-500 cursor-not-allowed font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2";
       }
 
-      // Render Lista de Motoristas Cadastrados
+      // Render Lista da Fila
       const driversListContainer = document.getElementById('drivers-registered-list');
       document.getElementById('drivers-online-count').textContent = `${activeDrivers.length} motorista(s) online na fila`;
 
-      driversListContainer.innerHTML = appState.motoristas.map((m) => {
+      const allSorted = [...appState.motoristas].sort((a, b) => {
+        if (a.status === 'online' && b.status !== 'online') return -1;
+        if (a.status !== 'online' && b.status === 'online') return 1;
+        return a.position - b.position;
+      });
+
+      driversListContainer.innerHTML = allSorted.map((m) => {
         const isOnline = m.status === 'online';
-        // Descobre a posição na fila caso esteja online
-        const queuePos = isOnline ? (activeDrivers.findIndex(d => d.id === m.id) + 1) : null;
 
         return `
           <div class="p-3.5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
-            queuePos === 1 ? 'bg-amber-500/10 border-amber-500/40 shadow-md' : 'bg-slate-950 border-slate-800'
+            isOnline && m.position === 1 ? 'bg-amber-500/10 border-amber-500/40 shadow-md' : 'bg-slate-950 border-slate-800'
           }">
             <div class="flex items-center space-x-3">
               <div class="w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-sm ${
-                queuePos === 1 ? 'bg-amber-500 text-slate-950' : (isOnline ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-500')
+                isOnline && m.position === 1 ? 'bg-amber-500 text-slate-950' : (isOnline ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-500')
               }">
-                ${isOnline ? `#${queuePos}` : 'OFF'}
+                ${isOnline ? `#${m.position}` : 'OFF'}
               </div>
               <div>
                 <div class="flex items-center space-x-2">
@@ -316,13 +377,13 @@
             </div>
 
             <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-              <button onclick="toggleDriverStatus('${m.id}')" class="text-xs font-bold px-3 py-1.5 rounded-lg border transition ${
+              <span class="text-xs font-bold px-3 py-1.5 rounded-lg border ${
                 isOnline 
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/30' 
-                  : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
+                  : 'bg-slate-800 text-slate-400 border-slate-700'
               }">
-                ${isOnline ? '🟢 Status: Online na Fila' : '🔴 Status: Offline'}
-              </button>
+                ${isOnline ? `🟢 Na Fila (Posição #${m.position})` : '🔴 Offline'}
+              </span>
             </div>
           </div>
         `;
