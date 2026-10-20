@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aeroporto Tancredo Neves - Fila Única em Nuvem Global</title>
+  <title>Aeroporto Tancredo Neves - Fila & Lotação Táxi</title>
   
   <meta name="theme-color" content="#f59e0b">
-  <meta name="description" content="Fila Única de Táxi em Nuvem Global - Aeroporto Tancredo Neves.">
+  <meta name="description" content="Sistema de Fila Eletrônica e Lotação (3 a 4 Passageiros) com Redirecionamento de WhatsApp - Aeroporto Tancredo Neves.">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,11 +30,11 @@
         </div>
         <div>
           <h1 class="font-extrabold text-base sm:text-lg text-amber-400 tracking-tight leading-none">Aeroporto Tancredo Neves</h1>
-          <p class="text-xs text-slate-400 font-medium">Fila Única Sincronizada em Nuvem Global</p>
+          <p class="text-xs text-slate-400 font-medium">Lotação (3 a 4 Passageiros) & Conexão WhatsApp</p>
         </div>
       </div>
       <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Nuvem Global Ativa
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistema Ativo
       </div>
     </div>
   </header>
@@ -42,166 +42,205 @@
   <!-- CONTEÚDO PRINCIPAL -->
   <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-    <!-- STATUS LOCALIZAÇÃO -->
-    <div class="bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 shadow-xl flex items-center justify-between gap-4">
-      <div class="flex items-center space-x-3">
-        <div class="bg-amber-500/20 text-amber-400 p-3 rounded-xl border border-amber-500/30">
-          <i data-lucide="map-pin" class="w-6 h-6"></i>
+    <!-- CARTÃO DE Destaque DO MOTORISTA #1 DA VEZ -->
+    <div class="bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/40 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
+        <div class="flex items-center space-x-4 w-full md:w-auto">
+          <div class="relative">
+            <div class="w-16 h-16 rounded-2xl bg-amber-500 text-slate-950 font-black text-2xl flex items-center justify-center shadow-lg shadow-amber-500/30">
+              #1
+            </div>
+            <span class="absolute -top-1 -right-1 flex h-4 w-4">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
+            </span>
+          </div>
+          <div>
+            <span class="bg-amber-400/20 text-amber-300 text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30">
+              MOTORISTA DA VEZ (RECEBENDO PASSAGEIROS)
+            </span>
+            <h2 id="banner-driver-name" class="text-xl sm:text-2xl font-black text-white mt-1">Aguardando motorista entrar na fila...</h2>
+            <p id="banner-driver-details" class="text-xs sm:text-sm text-slate-400">Nenhum táxi pronto para embarque no momento.</p>
+          </div>
         </div>
-        <div>
-          <span class="text-[10px] uppercase font-extrabold text-amber-400 tracking-wider">Local Oficial</span>
-          <h2 class="text-sm sm:text-base font-bold text-white">Aeroporto Internacional Tancredo Neves (Confins)</h2>
-          <p class="text-xs text-slate-400">Coordenadas: -19.6244, -43.9675</p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between md:justify-end w-full md:w-auto gap-3 bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
+          <div class="text-center px-3">
+            <span class="text-[10px] text-slate-400 block uppercase font-bold">Lotação Atual</span>
+            <span id="banner-passenger-count" class="text-xl font-extrabold text-amber-400">0 / 4</span>
+          </div>
+          <button id="btn-concluir-corrida" onclick="concluirEProximoMotorista()" disabled class="w-full sm:w-auto text-xs bg-slate-800 text-slate-500 cursor-not-allowed font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
+            <i data-lucide="check-circle" class="w-4 h-4"></i> Concluir & Próximo Motorista
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- FORMULÁRIO DE CADASTRO -->
+    <!-- SEÇÃO DE CADASTRO -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
       <div class="border-b border-slate-800 pb-3">
         <h3 class="font-bold text-lg text-amber-400 flex items-center gap-2">
-          <i data-lucide="user-plus" class="w-5 h-5"></i> Entrar na Fila Única em Nuvem
+          <i data-lucide="user-plus" class="w-5 h-5"></i> Acesso de Passageiros e Motoristas
         </h3>
-        <p class="text-xs text-slate-400 mt-1">Seu cadastro aparecerá instantaneamente nos celulares de todos os motoristas e passageiros conectados.</p>
+        <p class="text-xs text-slate-400 mt-1">Passageiros serão conectados diretamente ao WhatsApp do motorista #1 atual.</p>
       </div>
 
-      <form id="fila-form" onsubmit="handleFilaRegister(event)" class="space-y-4">
-        <!-- Perfil -->
-        <div class="grid grid-cols-2 gap-3">
-          <label class="cursor-pointer">
-            <input type="radio" name="perfil-choice" value="motorista" class="peer hidden" checked onchange="togglePerfilFields()">
-            <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition flex items-center justify-center gap-2">
-              <i data-lucide="car" class="w-4 h-4"></i> Motorista de Táxi
-            </div>
-          </label>
-          <label class="cursor-pointer">
-            <input type="radio" name="perfil-choice" value="passageiro" class="peer hidden" onchange="togglePerfilFields()">
-            <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-emerald-500 peer-checked:text-slate-950 transition flex items-center justify-center gap-2">
-              <i data-lucide="user" class="w-4 h-4"></i> Passageiro
-            </div>
-          </label>
-        </div>
+      <!-- SELETOR DE PERFIL -->
+      <div class="grid grid-cols-2 gap-3">
+        <label class="cursor-pointer">
+          <input type="radio" name="perfil-choice" value="passageiro" class="peer hidden" checked onchange="togglePerfilFields()">
+          <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-emerald-500 peer-checked:text-slate-950 peer-checked:border-emerald-500 transition flex items-center justify-center gap-2">
+            <i data-lucide="user" class="w-4 h-4"></i> Sou Passageiro (Ir para BH)
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="perfil-choice" value="motorista" class="peer hidden" onchange="togglePerfilFields()">
+          <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 peer-checked:border-amber-500 transition flex items-center justify-center gap-2">
+            <i data-lucide="car" class="w-4 h-4"></i> Sou Motorista de Táxi
+          </div>
+        </label>
+      </div>
 
+      <form id="main-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="text-xs text-slate-400 font-semibold mb-1 block">Nome Completo</label>
-            <input type="text" id="input-name" required placeholder="Ex: Carlos Eduardo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Seu Nome Completo</label>
+            <input type="text" id="input-name" required placeholder="Ex: Ana Silva" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
           </div>
           <div>
-            <label class="text-xs text-slate-400 font-semibold mb-1 block">Telefone / WhatsApp</label>
-            <input type="tel" id="input-phone" required placeholder="(31) 99999-8888" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Seu WhatsApp (Apenas números com DDD)</label>
+            <input type="tel" id="input-phone" required placeholder="Ex: 31988887777" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
           </div>
         </div>
 
-        <!-- Motorista Fields -->
-        <div id="fields-motorista" class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
-          <div>
-            <label class="text-xs text-slate-400 font-semibold mb-1 block">Prefixo</label>
-            <input type="text" id="input-prefix" placeholder="Ex: T-102" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+        <!-- FORMULÁRIO DO PASSAGEIRO (AS 2 OPÇÕES DE DESTINO) -->
+        <div id="fields-passageiro" class="space-y-3 pt-2 border-t border-slate-800">
+          <label class="text-xs text-slate-400 font-semibold block">Escolha seu Destino em Belo Horizonte:</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="flex items-center space-x-3 p-3.5 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
+              <input type="radio" name="destination-choice" value="Rodoviária de Belo Horizonte" class="text-emerald-500" checked>
+              <div class="text-xs">
+                <strong class="text-white block">1. Rodoviária de Belo Horizonte</strong>
+                <span class="text-slate-400">Praça Rio Branco, Centro - BH</span>
+              </div>
+            </label>
+            <label class="flex items-center space-x-3 p-3.5 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
+              <input type="radio" name="destination-choice" value="Avenida Álvares Cabral Belo Horizonte" class="text-emerald-500">
+              <div class="text-xs">
+                <strong class="text-white block">2. Avenida Álvares Cabral</strong>
+                <span class="text-slate-400">Região Central / Lourdes - BH</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- FORMULÁRIO DO MOTORISTA (CONFIGURAÇÃO DE COTA DE 3 A 4 PASSAGEIROS) -->
+        <div id="fields-motorista" class="hidden space-y-3 pt-2 border-t border-slate-800">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs text-slate-400 font-semibold mb-1 block">Prefixo do Táxi</label>
+              <input type="text" id="input-prefix" placeholder="Ex: T-102" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 font-semibold mb-1 block">Placa</label>
+              <input type="text" id="input-plate" placeholder="Ex: QX-3820" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+            </div>
           </div>
           <div>
-            <label class="text-xs text-slate-400 font-semibold mb-1 block">Placa</label>
-            <input type="text" id="input-plate" placeholder="Ex: QX-3820" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-          </div>
-          <div class="col-span-2">
-            <label class="text-xs text-slate-400 font-semibold mb-1 block">Cota de Atendimentos (1 a 4)</label>
-            <div class="grid grid-cols-4 gap-2">
-              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="1" class="peer hidden" checked><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">1</div></label>
-              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="2" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">2</div></label>
-              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="3" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">3</div></label>
-              <label class="cursor-pointer"><input type="radio" name="quota-choice" value="4" class="peer hidden"><div class="text-center py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">4</div></label>
+            <label class="text-xs text-slate-400 font-semibold mb-1 block">Meta de Passageiros para Saída:</label>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="cursor-pointer">
+                <input type="radio" name="quota-choice" value="3" class="peer hidden" checked>
+                <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">
+                  Mínimo: 3 Passageiros
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="quota-choice" value="4" class="peer hidden">
+                <div class="text-center py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold peer-checked:bg-amber-500 peer-checked:text-slate-950 transition">
+                  Máximo: 4 Passageiros
+                </div>
+              </label>
             </div>
           </div>
         </div>
 
-        <!-- Passageiro Fields -->
-        <div id="fields-passageiro" class="hidden space-y-3 pt-2 border-t border-slate-800">
-          <label class="text-xs text-slate-400 font-semibold block">Escolha o Destino em BH:</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
-              <input type="radio" name="destination-choice" value="Rodoviária de Belo Horizonte" class="text-emerald-500" checked>
-              <div class="text-xs">
-                <strong class="text-white block">Rodoviária de BH</strong>
-                <span class="text-slate-400">Praça Rio Branco</span>
-              </div>
-            </label>
-            <label class="flex items-center space-x-3 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer hover:border-emerald-500 transition">
-              <input type="radio" name="destination-choice" value="Avenida Álvares Cabral Belo Horizonte" class="text-emerald-500">
-              <div class="text-xs">
-                <strong class="text-white block">Av. Álvares Cabral</strong>
-                <span class="text-slate-400">Região Central</span>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 text-sm">
-          <i data-lucide="send" class="w-4 h-4"></i> Entrar na Fila Global da Nuvem
+        <button type="submit" id="submit-btn" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 text-sm">
+          <i data-lucide="message-circle" class="w-5 h-5"></i> Solicitar Táxi & Chamar Motorista #1 no WhatsApp
         </button>
       </form>
     </div>
 
-    <!-- PAINEL DA FILA ÚNICA -->
+    <!-- TABELA DE MOTORISTAS NA FILA -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="font-bold text-lg text-white flex items-center gap-2">
-          <i data-lucide="list-ordered" class="w-5 h-5 text-amber-400"></i> Fila Única Global (Sincronizada em Nuvem)
+          <i data-lucide="car" class="w-5 h-5 text-amber-400"></i> Fila Eletrônica de Motoristas
         </h3>
-        <span id="fila-counter" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium">Sincronizando...</span>
+        <span id="drivers-count" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium">0 táxis aguardando</span>
       </div>
 
-      <div id="fila-container" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-        <!-- Render dinâmico global -->
+      <div id="drivers-list" class="space-y-3">
+        <!-- Render dinâmico dos motoristas -->
+      </div>
+    </div>
+
+    <!-- LISTA DE PASSAGEIROS DA VIAGEM ATUAL -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-lg text-white flex items-center gap-2">
+          <i data-lucide="users" class="w-5 h-5 text-emerald-400"></i> Passageiros Conectados ao Motorista #1
+        </h3>
+        <span id="passengers-count" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium">0 passageiros</span>
+      </div>
+
+      <div id="passengers-list" class="space-y-3 max-h-60 overflow-y-auto pr-1">
+        <!-- Render dos passageiros da viagem atual -->
       </div>
     </div>
 
   </main>
 
-  <!-- LÓGICA DE NUVEM GLOBAL (JSONBIN) -->
+  <!-- LÓGICA DE NUVEM & SINCRONIZAÇÃO DE FILA -->
   <script>
-    // Nuvem pública compartilhada para testes automáticos instantâneos
     const BIN_ID = "679f2d6be41b4d34e47cb591"; 
-    const API_KEY = "$2a$10$oE1fOqZpX75c8KzXhP35Uu7m3Z1Q3Q1Q3Q1Q3Q1Q3Q1Q3Q1Q3Q1Q"; // Chave pública de integração
-    const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+    const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
+    const API_UPDATE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-    let globalFila = [];
+    let appState = {
+      motoristas: [
+        { id: 'm1', name: 'Carlos Eduardo', phone: '31999991111', prefix: 'CNF-101', plate: 'QX-3820', quota: 3, completed: 0 },
+        { id: 'm2', name: 'Roberto Lima', phone: '31988882222', prefix: 'CNF-205', plate: 'HMX-4920', quota: 4, completed: 0 }
+      ],
+      passageirosAtuais: []
+    };
 
     async function fetchCloudData() {
       try {
-        const response = await fetch(API_URL, {
-          headers: { 'X-Master-Key': '$2a$10$v8k3V8Q3Q1Q3Q1Q3Q1Q3Qe...' } // Tratado via endpoint aberto ou cache público
-        });
-        // Usando endpoint público alternativo para leitura instantânea sem barreiras de chave:
-        const publicRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-          headers: { 'X-Access-Key': '$2a$10$r9x...' }
-        });
-        if (publicRes.ok) {
-          const json = await publicRes.json();
-          if (json.record && Array.isArray(json.record.fila)) {
-            globalFila = json.record.fila;
-            renderFila();
+        const res = await fetch(API_URL);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.record && json.record.appState) {
+            appState = json.record.appState;
+            renderApp();
           }
         }
       } catch (e) {
-        // Fallback robusto para localStorage caso a nuvem externe latência
-        globalFila = JSON.parse(localStorage.getItem('fallback_fila_global')) || [];
-        renderFila();
+        const local = localStorage.getItem('taxifila_local_state');
+        if (local) appState = JSON.parse(local);
+        renderApp();
       }
     }
 
-    async function saveCloudData(nuevaFila) {
-      globalFila = nuevaFila;
-      localStorage.setItem('fallback_fila_global', JSON.stringify(globalFila));
-      renderFila();
+    async function saveCloudData() {
+      localStorage.setItem('taxifila_local_state', JSON.stringify(appState));
+      renderApp();
 
       try {
-        await fetch(API_URL, {
+        await fetch(API_UPDATE_URL, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Master-Key': '$2a$10$v8k3V8Q3Q1Q3Q1Q3Q1Q3Qe...'
-          },
-          body: JSON.stringify({ fila: globalFila })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ appState })
         });
       } catch (e) {}
     }
@@ -210,113 +249,209 @@
       const perfil = document.querySelector('input[name="perfil-choice"]:checked').value;
       const mFields = document.getElementById('fields-motorista');
       const pFields = document.getElementById('fields-passageiro');
-      const submitBtn = document.querySelector('button[type="submit"]');
+      const submitBtn = document.getElementById('submit-btn');
 
-      if (perfil === 'motorista') {
-        mFields.classList.remove('hidden');
-        pFields.classList.add('hidden');
-        submitBtn.className = "w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 text-sm";
-      } else {
-        mFields.classList.add('hidden');
+      if (perfil === 'passageiro') {
         pFields.classList.remove('hidden');
-        submitBtn.className = "w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 text-sm";
+        mFields.classList.add('hidden');
+        submitBtn.className = "w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 text-sm";
+        submitBtn.innerHTML = `<i data-lucide="message-circle" class="w-5 h-5"></i> Solicitar Táxi & Chamar Motorista #1 no WhatsApp`;
+      } else {
+        pFields.classList.add('hidden');
+        mFields.classList.remove('hidden');
+        submitBtn.className = "w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 text-sm";
+        submitBtn.innerHTML = `<i data-lucide="car" class="w-5 h-5"></i> Entrar na Fila de Motoristas`;
       }
+      if (window.lucide) lucide.createIcons();
     }
 
-    async function handleFilaRegister(e) {
+    async function handleFormSubmit(e) {
       e.preventDefault();
       const perfil = document.querySelector('input[name="perfil-choice"]:checked').value;
       const name = document.getElementById('input-name').value.trim();
-      const phone = document.getElementById('input-phone').value.trim();
+      let phone = document.getElementById('input-phone').value.trim().replace(/\D/g,'');
 
       if (!name || !phone) return;
 
-      let novoItem = {
-        id: 'item_' + Date.now(),
-        perfil,
-        name,
-        phone,
-        timestamp: Date.now()
-      };
+      if (perfil === 'passageiro') {
+        const activeDriver = appState.motoristas[0];
 
-      if (perfil === 'motorista') {
-        novoItem.prefix = document.getElementById('input-prefix').value.trim() || 'CNF-BR';
-        novoItem.plate = document.getElementById('input-plate').value.trim() || 'ABC-1234';
-        novoItem.quota = parseInt(document.querySelector('input[name="quota-choice"]:checked').value);
-        novoItem.completed = 0;
+        if (!activeDriver) {
+          alert('Atenção: Não há nenhum motorista na fila no momento. Seu cadastro foi recebido, aguarde a entrada de um táxi.');
+          return;
+        }
+
+        const destination = document.querySelector('input[name="destination-choice"]:checked').value;
+
+        const newPassenger = {
+          id: 'p_' + Date.now(),
+          name,
+          phone,
+          destination,
+          assignedDriverId: activeDriver.id,
+          timestamp: Date.now()
+        };
+
+        appState.passageirosAtuais.push(newPassenger);
+        await saveCloudData();
+
+        // REDIRECIONA DIRETO PARA O WHATSAPP DO MOTORISTA #1
+        let driverPhone = activeDriver.phone.replace(/\D/g,'');
+        if (!driverPhone.startsWith('55') && driverPhone.length >= 10) {
+          driverPhone = '55' + driverPhone;
+        }
+
+        const msg = `Olá Motorista ${activeDriver.name} (${activeDriver.prefix}), meu nome é ${name}. Solicitei um táxi no Aeroporto Tancredo Neves com destino a: *${destination}*. Estou aguardando no ponto!`;
+        const waUrl = `https://wa.me/${driverPhone}?text=${encodeURIComponent(msg)}`;
+
+        document.getElementById('main-form').reset();
+        window.open(waUrl, '_blank');
+
       } else {
-        novoItem.destination = document.querySelector('input[name="destination-choice"]:checked').value;
+        // CADASTRO DE MOTORISTA
+        const prefix = document.getElementById('input-prefix').value.trim() || 'CNF-BR';
+        const plate = document.getElementById('input-plate').value.trim() || 'ABC-1234';
+        const quota = parseInt(document.querySelector('input[name="quota-choice"]:checked').value);
+
+        const newDriver = {
+          id: 'm_' + Date.now(),
+          name,
+          phone,
+          prefix,
+          plate,
+          quota,
+          completed: 0
+        };
+
+        appState.motoristas.push(newDriver);
+        await saveCloudData();
+        document.getElementById('main-form').reset();
+        alert('Motorista cadastrado com sucesso na fila eletrônica!');
       }
-
-      globalFila.push(novoItem);
-      await saveCloudData(globalFila);
-
-      document.getElementById('fila-form').reset();
-      togglePerfilFields();
-      alert('Cadastrado com sucesso na fila global da nuvem!');
     }
 
-    async function removerDaFila(id) {
-      if (confirm('Deseja realmente sair da fila?')) {
-        globalFila = globalFila.filter(item => item.id !== id);
-        await saveCloudData(globalFila);
-      }
-    }
+    // CONCLUIR E PASSAR O POSTO PARA O PRÓXIMO MOTORISTA
+    async function concluirEProximoMotorista() {
+      if (appState.motoristas.length === 0) return;
 
-    function renderFila() {
-      const container = document.getElementById('fila-container');
-      document.getElementById('fila-counter').textContent = `${globalFila.length} na fila global`;
+      const activeDriver = appState.motoristas[0];
+      const passengerCount = appState.passageirosAtuais.length;
 
-      if (globalFila.length === 0) {
-        container.innerHTML = `<div class="p-6 bg-slate-950 rounded-xl text-center text-xs text-slate-500">A fila única global está vazia no momento.</div>`;
+      if (passengerCount < 3) {
+        alert(`O motorista precisa ter no mínimo 3 passageiros para sair. Lotação atual: ${passengerCount}/3.`);
         return;
       }
 
-      container.innerHTML = globalFila.map((item, idx) => {
-        const isMotorista = item.perfil === 'motorista';
-        const isFirst = idx === 0;
+      if (confirm(`Confirmar saída do Motorista ${activeDriver.name} com ${passengerCount} passageiro(s)? A fila vai avançar para o próximo motorista.`)) {
+        // Move o motorista atual para o fim da fila
+        const rotatedDriver = appState.motoristas.shift();
+        rotatedDriver.completed += 1;
+        appState.motoristas.push(rotatedDriver);
 
-        return `
-          <div class="p-3.5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
-            isFirst ? 'bg-amber-500/10 border-amber-500/40 shadow-md' : 'bg-slate-950 border-slate-800'
-          }">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-sm ${
-                isFirst ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'
-              }">
-                #${idx + 1}
-              </div>
-              <div>
-                <div class="flex items-center space-x-2">
-                  <span class="font-bold text-sm text-white">${item.name}</span>
-                  <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                    isMotorista ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                  }">
-                    ${isMotorista ? 'Táxi / Motorista' : 'Passageiro'}
-                  </span>
+        // Limpa os passageiros atuais pois a viagem saiu
+        appState.passageirosAtuais = [];
+        await saveCloudData();
+
+        alert('Viagem concluída! O próximo motorista assumiu o primeiro lugar na fila.');
+      }
+    }
+
+    async function removerMotorista(id) {
+      if (confirm('Remover este motorista da fila?')) {
+        appState.motoristas = appState.motoristas.filter(m => m.id !== id);
+        await saveCloudData();
+      }
+    }
+
+    function renderApp() {
+      const activeDriver = appState.motoristas[0];
+      const passengerCount = appState.passageirosAtuais.length;
+
+      // Banner do Motorista #1
+      const bannerName = document.getElementById('banner-driver-name');
+      const bannerDetails = document.getElementById('banner-driver-details');
+      const bannerCount = document.getElementById('banner-passenger-count');
+      const btnConcluir = document.getElementById('btn-concluir-corrida');
+
+      if (activeDriver) {
+        bannerName.textContent = `${activeDriver.name} (${activeDriver.prefix})`;
+        bannerDetails.textContent = `Placa: ${activeDriver.plate} • Tel/WhatsApp: ${activeDriver.phone} • Meta: ${activeDriver.quota} Passageiros`;
+        bannerCount.textContent = `${passengerCount} / ${activeDriver.quota}`;
+
+        if (passengerCount >= 3) {
+          btnConcluir.disabled = false;
+          btnConcluir.className = "w-full sm:w-auto text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold px-4 py-2.5 rounded-xl border border-emerald-400 transition flex items-center justify-center gap-2 shadow-lg cursor-pointer";
+        } else {
+          btnConcluir.disabled = true;
+          btnConcluir.className = "w-full sm:w-auto text-xs bg-slate-800 text-slate-500 cursor-not-allowed font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2";
+        }
+      } else {
+        bannerName.textContent = "Aguardando motorista entrar na fila...";
+        bannerDetails.textContent = "Nenhum táxi pronto para embarque no momento.";
+        bannerCount.textContent = "0 / 0";
+        btnConcluir.disabled = true;
+        btnConcluir.className = "w-full sm:w-auto text-xs bg-slate-800 text-slate-500 cursor-not-allowed font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2";
+      }
+
+      // Lista de Motoristas
+      const driversContainer = document.getElementById('drivers-list');
+      document.getElementById('drivers-count').textContent = `${appState.motoristas.length} táxi(s) aguardando`;
+
+      if (appState.motoristas.length === 0) {
+        driversContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Nenhum motorista na fila eletrônica.</div>`;
+      } else {
+        driversContainer.innerHTML = appState.motoristas.map((m, idx) => {
+          const isFirst = idx === 0;
+          return `
+            <div class="p-3.5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+              isFirst ? 'bg-amber-500/10 border-amber-500/40 shadow-md' : 'bg-slate-950 border-slate-800'
+            }">
+              <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center font-extrabold text-sm ${
+                  isFirst ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'
+                }">
+                  #${idx + 1}
                 </div>
-                <p class="text-xs text-slate-400 mt-0.5">
-                  Tel: ${item.phone} 
-                  ${isMotorista ? `• Prefixo: ${item.prefix}` : `• Destino: <strong class="text-emerald-400">${item.destination}</strong>`}
-                </p>
+                <div>
+                  <strong class="text-sm text-white">${m.name}</strong> <span class="text-xs text-amber-400 font-semibold">(${m.prefix})</span>
+                  <p class="text-xs text-slate-400 mt-0.5">Placa: ${m.plate} • Tel: ${m.phone} • Meta de Saída: ${m.quota} passageiros</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                ${isFirst ? `<span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-1 rounded-full border border-emerald-500/30">Recebendo Passageiros</span>` : ''}
+                <button onclick="removerMotorista('${m.id}')" class="text-xs bg-red-950/60 hover:bg-red-900 text-red-400 border border-red-800/50 px-2 py-1 rounded-lg font-bold">Remover</button>
               </div>
             </div>
+          `;
+        }).join('');
+      }
 
-            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-              <button onclick="removerDaFila('${item.id}')" class="text-xs bg-red-950/60 hover:bg-red-900 text-red-400 border border-red-800/50 px-2.5 py-1.5 rounded-lg font-bold transition">
-                Sair da Fila
-              </button>
+      // Lista de Passageiros do Motorista #1
+      const passengersContainer = document.getElementById('passengers-list');
+      document.getElementById('passengers-count').textContent = `${passengerCount} passageiro(s) atribuídos ao Motorista #1`;
+
+      if (appState.passageirosAtuais.length === 0) {
+        passengersContainer.innerHTML = `<div class="p-4 bg-slate-950 rounded-xl text-center text-xs text-slate-500">Nenhum passageiro conectado a esta viagem ainda.</div>`;
+      } else {
+        passengersContainer.innerHTML = appState.passageirosAtuais.map((p, idx) => `
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="font-bold text-sm text-white">${idx + 1}. ${p.name}</span>
+              <p class="text-xs text-slate-300 mt-0.5">Destino: <strong class="text-emerald-400">${p.destination}</strong> • Tel: ${p.phone}</p>
             </div>
+            <a href="https://wa.me/55${p.phone.replace(/\D/g,'')}" target="_blank" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
+            </a>
           </div>
-        `;
-      }).join('');
+        `).join('');
+      }
 
       if (window.lucide) lucide.createIcons();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      togglePerfilFields();
       fetchCloudData();
-      // Atualização automática em segundo plano a cada 4 segundos para sincronizar todos os celulares
       setInterval(fetchCloudData, 4000);
     });
   </script>
